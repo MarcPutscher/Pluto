@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<StackLayout xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            x:Class="Pluto.Cells.Field_View"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             BackgroundColor="#07060D" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Padding="2"
+            xmlns:models="clr-namespace:Pluto.Models"
+             x:DataType="models:Field">
+    
+    
+    <StackLayout.Triggers>
+        <DataTrigger TargetType="StackLayout" Binding="{Binding Is_Select}" Value="True" >
+            <Setter Property="BackgroundColor" Value="{Binding Number_Color}"/>
+        </DataTrigger>
+    </StackLayout.Triggers>
+
+    <Grid  BackgroundColor="{Binding Number_Background_Color}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <Label Text="{Binding Visible_Number}" VerticalOptions="CenterAndExpand" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="CenterAndExpand" FontSize="Title" TextColor="{Binding Number_Color}" />
+        <Label Text="{Binding Visible_Skips}" VerticalOptions="StartAndExpand" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="End" FontSize="12" TextColor="Gray" />
+        <Label Text="max" VerticalOptions="End" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="End" FontSize="8" TextColor="DarkRed" IsVisible="{Binding Is_Saturated}" />
+    </Grid>
+
+</StackLayout>
