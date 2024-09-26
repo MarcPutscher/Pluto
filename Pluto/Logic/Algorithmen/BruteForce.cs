@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pluto.Logic
-{   
+namespace Pluto.Logic.Algorithmen
+{
     /// <summary>
     /// Ein Algorithmus der stupide alle möglichkeiten nacheinander durchgeht.
     /// </summary>
@@ -19,8 +19,6 @@ namespace Pluto.Logic
         /// <summary>
         /// Der Hauptprozzes wo überprüft wird ob der Block korrekt ist. 
         /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
         public async Task<bool> MainProcess(CancellationToken token)
         {
             //Erstellt eine syncrone Liste von allen Feldern
@@ -33,7 +31,7 @@ namespace Pluto.Logic
                 }
             }
 
-            // Geht jeden Block nacheinander durch und füllt die Blöcke mit Zahlen
+            // Geht jeden Block nacheinander durch und füllt die Felder mit Zahlen
             for (int current_field_position = MainPage.field_position_marker; current_field_position < 81; current_field_position++)
             {
                 //Überprüft ob aktuelles Feld das gespeichte Feld ist
@@ -77,7 +75,7 @@ namespace Pluto.Logic
                             if (all_fields[h].Is_Saturated == false)
                             {
                                 //Gibt das max von Skips in diesem Feld
-                                List<Boolean> checklist = new List<bool>();
+                                List<bool> checklist = new List<bool>();
                                 List<Field> faults = new List<Field>();
                                 Field field = new Field() { Id = all_fields[h].Id, Number = all_fields[h].Number, Column_Number = all_fields[h].Column_Number, Row_Number = all_fields[h].Row_Number, Grid_Number = all_fields[h].Grid_Number, Is_Fault = all_fields[h].Is_Fault, Is_Select = all_fields[h].Is_Select, Number_Background_Color = all_fields[h].Number_Background_Color, Number_Color = all_fields[h].Number_Color, Visible_Number = all_fields[h].Visible_Number, Is_Locked = all_fields[h].Is_Locked };
                                 int skipcounter = -1;
@@ -117,7 +115,7 @@ namespace Pluto.Logic
                                 else
                                 {
                                     //Wenn das erste Feld gesättigt ist und es keine möglichkeiten mehr gibt dann gib false zurück
-                                    if(h == 0)
+                                    if (h == 0)
                                         return false;
 
                                     all_fields[h].Number = 0;
@@ -151,15 +149,9 @@ namespace Pluto.Logic
         /// <summary>
         /// Überprüft im Feld die Zahlen und ob sie korrekt sind
         /// </summary>
-        /// <param name="token"></param>
-        /// <param name="fields"></param>
-        /// <param name="block_position"></param>
-        /// <param name="field_position"></param>
-        /// <param name="all_fields"></param>
-        /// <returns></returns>
         public async Task<bool> Check_Field(CancellationToken token, int field_position, List<Field> all_fields)
         {
-            List<Boolean> checklist = new List<bool>();
+            List<bool> checklist = new List<bool>();
             List<Field> faults = new List<Field>();
 
             // Platzhalter Feld für das aktuelle Feld
@@ -195,7 +187,7 @@ namespace Pluto.Logic
                 all_fields[field_position].Number = field.Number;
 
                 //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                if(MainPage.dificulty_marker == "Leicht")
+                if (MainPage.dificulty_marker == "Leicht")
                 {
                     await Task.Delay(100);
                 }
@@ -220,7 +212,7 @@ namespace Pluto.Logic
                     await Task.Delay(20);
                 }
 
-                //Wenn alle Regeln sind korrekt sind und es keine Fehlerfelder gibt
+                //Wenn alle Regeln korrekt sind und es keine Fehlerfelder gibt
                 if (checklist.Contains(false) == false && faults.Count == 0)
                 {
                     //Wenn alle Skipanzahlen die möglich sind erreicht sind, sond erhöhe die Skipanzahl um 1

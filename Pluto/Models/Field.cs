@@ -105,7 +105,7 @@ namespace Pluto.Models
                 }
             }
         }
-        string visible_skips = string.Empty;
+        public string visible_skips = null;
         public string Visible_Skips
         {
             get { return visible_skips; }
@@ -120,7 +120,7 @@ namespace Pluto.Models
                 visible_skips = value; OnPropertyChanged(nameof(Visible_Skips));
             }
         }
-        string visible_number = string.Empty;
+        public string visible_number = null;
         public string Visible_Number
         {
             get { return visible_number; }

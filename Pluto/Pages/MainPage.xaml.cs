@@ -404,6 +404,7 @@ namespace Pluto.Pages
                 field_stop_position = 1;
                 block_stop_position = 0;
                 skip_stop_position = 0;
+                Possebilities_Log = new List<Possebilitie>();
 
                 number_collectionview.IsVisible = false;
                 Spielfeldoptionen.IsVisible = false;
@@ -503,6 +504,7 @@ namespace Pluto.Pages
                 field_stop_position = 1;
                 block_stop_position = 0;
                 skip_stop_position = 0;
+                Possebilities_Log = new List<Possebilitie>();
 
                 if (numberGrid == true)
                 {
@@ -544,6 +546,7 @@ namespace Pluto.Pages
                     }
                 }
 
+
                 if (numberGrid == true)
                 {
                     current_Field.Is_Select = false;
@@ -556,6 +559,11 @@ namespace Pluto.Pages
                 }
 
                 stopwatch = null;
+                field_position_marker = 0;
+                field_stop_position = 1;
+                block_stop_position = 0;
+                skip_stop_position = 0;
+                Possebilities_Log = new List<Possebilitie>();
             }
         }
 
@@ -589,7 +597,7 @@ namespace Pluto.Pages
 
                 Status_Solver = "Arbeitet";
 
-                bool result = await solver.Process("Brute Force",token);
+                bool result = await solver.Process(Algorithmus_Label,token);
 
                 if (result == true)
                 {
@@ -610,6 +618,7 @@ namespace Pluto.Pages
                     field_stop_position = 1;
                     block_stop_position = 0;
                     skip_stop_position = 0;
+                    Possebilities_Log = new List<Possebilitie>();
 
                     Timer_Label = string.Empty;
                 }
@@ -881,6 +890,7 @@ namespace Pluto.Pages
                 field_stop_position = 1;
                 block_stop_position = 0;
                 skip_stop_position = 0;
+                Possebilities_Log = new List<Possebilitie>();
 
                 Difficulty = (playgroundlist.SelectedItem as Playground).Difficulty;
                 Status_Solver = "Undefiniert";
@@ -1006,7 +1016,7 @@ namespace Pluto.Pages
 
         private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
-            Timer_Label = stopwatch?.Elapsed.ToString("mm\\:ss\\.f");
+            Timer_Label = stopwatch?.Elapsed.ToString("hh\\:mm\\:ss\\.f");
         }
 
 
@@ -1014,6 +1024,11 @@ namespace Pluto.Pages
         public static ObservableRangeCollection<ObservableCollection<Field>> Fields = new ObservableRangeCollection<ObservableCollection<Field>>();
         public static ObservableCollection<Field> Locked_Fields = new ObservableCollection<Field>();
         public static ObservableCollection<Logdata> Logs = new ObservableCollection<Logdata>();
+
+
+
+        public static List<Possebilitie> Possebilities_Log = new List<Possebilitie>();
+
 
         public List<Field> Placholder_Fields = new List<Field>();
 

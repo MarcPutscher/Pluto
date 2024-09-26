@@ -492,6 +492,7 @@
                         <CollectionView.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
                                 <x:String>Brute-Force</x:String>
+                                <x:String>Check one direction</x:String>
                             </x:Array>
                         </CollectionView.ItemsSource>
                         <CollectionView.ItemsLayout>
