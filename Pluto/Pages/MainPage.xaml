@@ -4,6 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"  
             xmlns:models="clr-namespace:Pluto.Models"
+             xmlns:helper="clr-namespace:Pluto.Helpers"
             xmlns:cells="clr-namespace:Pluto.Cells"
             xmlns:fontAwesome="clr-namespace:FontAwesome"
              xmlns:page="clr-namespace:Pluto.Pages"
@@ -492,6 +493,7 @@
                         <CollectionView.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
                                 <x:String>Brute-Force</x:String>
+                                <x:String>Brute-Force Advanced</x:String>
                                 <x:String>Check one direction</x:String>
                             </x:Array>
                         </CollectionView.ItemsSource>
@@ -546,6 +548,26 @@
                 <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
                     <Label Text="Dauer :" TextColor="#ABE4DA" IsVisible="{Binding Timer_Label, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
                     <Label Text="{Binding Timer_Label}" TextColor="Yellow" >
+                        <Label.FontSize>
+                            <OnPlatform x:TypeArguments="x:Double">
+                                <On Platform="Android" Value="15"/>
+                                <On Platform="WinUI" Value="15"/>
+                            </OnPlatform>
+                        </Label.FontSize>
+                    </Label>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
+                    <Label  Text="Versuche :" TextColor="#ABE4DA" >
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" Value="False">
+                                <Setter Property="IsVisible" Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Label" Binding="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" Value="True">
+                                <Setter Property="IsVisible" Value="True"/>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                    <Label TextColor="Yellow" Text="{Binding Attampts_Label}" IsVisible="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" >
                         <Label.FontSize>
                             <OnPlatform x:TypeArguments="x:Double">
                                 <On Platform="Android" Value="15"/>
@@ -764,7 +786,7 @@
                             <Label.FontSize>
                                 <OnPlatform x:TypeArguments="x:Double">
                                     <On Platform="Android" Value="20"/>
-                                    <On Platform="WinUI" Value="25"/>
+                                    <On Platform="WinUI" Value="20"/>
                                 </OnPlatform>
                             </Label.FontSize>
                         </Label>

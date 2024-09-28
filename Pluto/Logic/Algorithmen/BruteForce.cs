@@ -19,7 +19,7 @@ namespace Pluto.Logic.Algorithmen
         /// <summary>
         /// Der Hauptprozzes wo überprüft wird ob der Block korrekt ist. 
         /// </summary>
-        public async Task<bool> MainProcess(CancellationToken token)
+        public async Task<bool> MainProcess(CancellationToken token, MainPage mainPage)
         {
             //Erstellt eine syncrone Liste von allen Feldern
             List<Field> all_fields = new List<Field>();
@@ -110,6 +110,8 @@ namespace Pluto.Logic.Algorithmen
                                     }
 
                                     current_field_position = h - 1;
+
+                                    mainPage.Attampts_Label++;
                                     break;
                                 }
                                 else

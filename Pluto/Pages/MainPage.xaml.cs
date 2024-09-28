@@ -386,6 +386,9 @@ namespace Pluto.Pages
                         f.Number = 0;
                         f.Skips = 0;
                         f.Is_Saturated = false;
+                        f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
+                        f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
+                        f.Is_Clearly = false;
                     }
                 }
 
@@ -405,6 +408,7 @@ namespace Pluto.Pages
                 block_stop_position = 0;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
+                Attampts_Label = 0;
 
                 number_collectionview.IsVisible = false;
                 Spielfeldoptionen.IsVisible = false;
@@ -496,6 +500,9 @@ namespace Pluto.Pages
                             f.Number = 0;
                             f.Skips = 0;
                             f.Is_Saturated = false;
+                            f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
+                            f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
+                            f.Is_Clearly = false;
                         }
                     }
                 }
@@ -505,6 +512,7 @@ namespace Pluto.Pages
                 block_stop_position = 0;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
+                Attampts_Label = 0;
 
                 if (numberGrid == true)
                 {
@@ -542,6 +550,9 @@ namespace Pluto.Pages
                             f.Skips = 0;
                             f.Is_Saturated = false;
                             f.Number = 0;
+                            f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
+                            f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
+                            f.Is_Clearly = false;
                         }
                     }
                 }
@@ -564,6 +575,7 @@ namespace Pluto.Pages
                 block_stop_position = 0;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
+                Attampts_Label = 0;
             }
         }
 
@@ -597,7 +609,7 @@ namespace Pluto.Pages
 
                 Status_Solver = "Arbeitet";
 
-                bool result = await solver.Process(Algorithmus_Label,token);
+                bool result = await solver.Process(Algorithmus_Label,token, this);
 
                 if (result == true)
                 {
@@ -619,6 +631,7 @@ namespace Pluto.Pages
                     block_stop_position = 0;
                     skip_stop_position = 0;
                     Possebilities_Log = new List<Possebilitie>();
+                    Attampts_Label = 0;
 
                     Timer_Label = string.Empty;
                 }
@@ -891,6 +904,7 @@ namespace Pluto.Pages
                 block_stop_position = 0;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
+                Attampts_Label = 0;
 
                 Difficulty = (playgroundlist.SelectedItem as Playground).Difficulty;
                 Status_Solver = "Undefiniert";
@@ -994,6 +1008,9 @@ namespace Pluto.Pages
                                 f.Is_Fault = false;
                                 f.Skips = 0;
                                 f.Is_Saturated = false;
+                                f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
+                                f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
+                                f.Is_Clearly = false;
                                 follower++;
 
                                 if (f.Number != 0 && f.Is_Fault == false)
@@ -1161,6 +1178,17 @@ namespace Pluto.Pages
                     return;
                 difficulty = value; OnPropertyChanged(nameof(Difficulty));
                 dificulty_marker = value;
+            }
+        }
+        public int attampts_label = 0;
+        public int Attampts_Label
+        {
+            get { return attampts_label; }
+            set
+            {
+                if (Attampts_Label == value)
+                    return;
+                attampts_label = value; OnPropertyChanged(nameof(Attampts_Label));
             }
         }
 

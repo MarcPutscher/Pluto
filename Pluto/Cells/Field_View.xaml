@@ -17,6 +17,27 @@
         <Label Text="{Binding Visible_Number}" VerticalOptions="CenterAndExpand" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="CenterAndExpand" FontSize="Title" TextColor="{Binding Number_Color}" />
         <Label Text="{Binding Visible_Skips}" VerticalOptions="StartAndExpand" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="End" FontSize="12" TextColor="Gray" />
         <Label Text="max" VerticalOptions="End" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="End" FontSize="8" TextColor="DarkRed" IsVisible="{Binding Is_Saturated}" />
+        <Label Text="clearly" VerticalOptions="End" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="Start" FontSize="8" TextColor="DarkRed" IsVisible="{Binding Is_Clearly}" />
+        <CollectionView ItemsSource="{Binding Placeholder_Number_Horizontal}" VerticalOptions="Start"  BackgroundColor="Transparent" HorizontalOptions="End">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="1"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding .}" FontSize="8" TextColor="Gray" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <CollectionView ItemsSource="{Binding Placeholder_Number_Vertikal}" VerticalOptions="Start" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="Start">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="1"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding .}" FontSize="8" TextColor="Gray" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </Grid>
 
 </StackLayout>

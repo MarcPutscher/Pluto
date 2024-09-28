@@ -1,6 +1,7 @@
 ﻿using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -169,6 +170,7 @@ namespace Pluto.Models
                 }
             }
         }
+
         bool was_manuel_select = false;
         public bool Was_Manuel_Select
         {
@@ -214,6 +216,17 @@ namespace Pluto.Models
                 is_saturated = value; OnPropertyChanged(nameof(Is_Saturated));
             }
         }
+        bool is_clearly = false;
+        public bool Is_Clearly
+        {
+            get { return is_clearly; }
+            set
+            {
+                if (Is_Clearly == value)
+                    return;
+                is_clearly = value; OnPropertyChanged(nameof(Is_Clearly));
+            }
+        }
 
         Color number_color = Color.FromArgb("#278A15");
         public Color Number_Color
@@ -235,6 +248,37 @@ namespace Pluto.Models
                 if (Number_Background_Color == value)
                     return;
                 number_background_color = value; OnPropertyChanged(nameof(Number_Background_Color));
+            }
+        }
+
+
+        public ObservableCollection<int> placeholder_number_vertikal = new ObservableCollection<int>();
+        public ObservableCollection<int> Placeholder_Number_Vertikal
+        {
+            get { return placeholder_number_vertikal; }
+            set
+            {
+                if (Placeholder_Number_Vertikal == value)
+                    if (Is_Locked == true)
+                {
+                    return;
+                }
+                placeholder_number_vertikal = value; OnPropertyChanged(nameof(Placeholder_Number_Vertikal));
+            }
+        }
+
+        public ObservableCollection<int> placeholder_number_horizontal = new ObservableCollection<int>();
+        public ObservableCollection<int> Placeholder_Number_Horizontal
+        {
+            get { return placeholder_number_horizontal; }
+            set
+            {
+                if (Placeholder_Number_Horizontal == value)
+                    if (Is_Locked == true)
+                    {
+                        return;
+                    }
+                placeholder_number_horizontal = value; OnPropertyChanged(nameof(Placeholder_Number_Horizontal));
             }
         }
 
