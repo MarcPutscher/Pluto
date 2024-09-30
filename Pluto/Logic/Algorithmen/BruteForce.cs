@@ -144,7 +144,6 @@ namespace Pluto.Logic.Algorithmen
             //Setzt alle Speicherpunkte und Skipliste auf Standard 
             MainPage.field_position_marker = 0;
             MainPage.field_stop_position = 1;
-            MainPage.block_stop_position = 0;
             return true;
         }
 
@@ -173,7 +172,6 @@ namespace Pluto.Logic.Algorithmen
                 {
                     MainPage.field_position_marker = all_fields[field_position].Id;
                     MainPage.field_stop_position = picked_number;
-                    MainPage.block_stop_position = all_fields[field_position].Grid_Number;
                     MainPage.skip_stop_position = skipiterration;
                     token.ThrowIfCancellationRequested();
                     return false;

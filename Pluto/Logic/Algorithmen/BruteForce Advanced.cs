@@ -61,10 +61,8 @@ namespace Pluto.Logic.Algorithmen
             //Ermittelt zuerst die Eindeutigen Zahlen
             for (bool playground_is_solved = false; playground_is_solved == false;)
             {
-                await Task.Delay(1);
-
                 //Wenn keine 0 mehr auf dem Spielfeld ist,dann ist das Spielfeld gelöst
-                if (all_fields.Where(x => x.Number == 0).Count() == 0)
+                if (all_fields.Where(x => x.Number == 0).Count() == 0 || MainPage.field_position_marker != 0)
                 {
                     playground_is_solved = true;
                     break;
@@ -94,14 +92,58 @@ namespace Pluto.Logic.Algorithmen
                 }
             }
 
+            //Der Indikator der die letzte Bocknummer beinhaltet
+            int last_grid = 1;
+
             // Geht jeden Block nacheinander durch und füllt die Felder mit Zahlen
             for (int current_field_position = MainPage.field_position_marker; current_field_position < 81; current_field_position++)
             {
                 //Überprüft ob aktuelles Feld das gespeichte Feld ist
                 if (all_fields[current_field_position].Id >= MainPage.field_position_marker)
                 {
+                    //Wenn der erste Block gefüllt ist dann ermittel für die aktuelle Situation die Semi-Eindeutigen
+                    if(9 == all_fields[current_field_position].Id)
+                    {
+                        //Ermittelt die Semi-Eindeutigen Zahlen
+                        for (bool playground_is_solved = false; playground_is_solved == false;)
+                        {
+                            //Wenn keine 0 mehr auf dem Spielfeld ist,dann ist das Spielfeld gelöst
+                            if (all_fields.Where(x => x.Number == 0).Count() == 0)
+                            {
+                                playground_is_solved = true;
+
+                                //Setzt alle Speicherpunkte und Skipliste auf Standard 
+                                MainPage.field_position_marker = 0;
+                                MainPage.field_stop_position = 1;
+                                return true;
+                            }
+
+                            //Erstellt einen Zähler der zählt wie viele Felder geändert wurden
+                            int counter = 0;
+
+                            //Geht die Blockslevel durch
+                            for (int i = 0; i < 3; i++)
+                            {
+                                await Task.Delay(1);
+
+                                if (await Check_Blocklevel_For_Semi_Clearly(all_fields, horizontal_blocks[i], "horizontal", token, all_fields[current_field_position].Grid_Number, current_field_position) == true)
+                                    counter++;
+
+                                if (await Check_Blocklevel_For_Semi_Clearly(all_fields, vertikal_blocks[i], "vertikal", token, all_fields[current_field_position].Grid_Number, current_field_position) == true)
+                                    counter++;
+                            }
+
+
+                            //Wenn keine Felder geändert wurden anhalten
+                            if (counter == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
                     // Wenn aktuelles Feld gelockt das gehe weiter
-                    if (all_fields[current_field_position].Is_Locked == true || all_fields[current_field_position].Is_Clearly == true)
+                    if (all_fields[current_field_position].Is_Locked == true || all_fields[current_field_position].Is_Clearly == true || all_fields[current_field_position].Is_Semi_Clearly == true)
                     {
                         continue;
                     }
@@ -127,8 +169,26 @@ namespace Pluto.Logic.Algorithmen
                         int follower = current_field_position - 1;
                         for (int h = current_field_position - 1; h > -1; h--)
                         {
+
+                            //Überprüft ob sich das aktuelle Feld im ersten Block befindet
+                            if (all_fields[h].Id < 9)
+                            {
+                                //Geht alle Felder duch
+                                foreach (Field f in all_fields)
+                                {
+                                    //Wenn Feld ist Semi-Eindeutig und die das Feld sich auserhalb vom ersten Block befindet, dann setzte das Feld auf Standard
+                                    if (f.Is_Semi_Clearly == true && f.Grid_Number >= last_grid)
+                                    {
+                                        f.Number = 0;
+                                        f.Is_Saturated = false;
+                                        f.Is_Semi_Clearly = false;
+                                        f.Skips = 0;
+                                    }
+                                }
+                            }
+
                             //Wenn das vorhergehende Feld gelockt ist dann gehe eins weiter zurück
-                            if (all_fields[h].Is_Locked == true || all_fields[h].Is_Clearly == true)
+                            if (all_fields[h].Is_Locked == true || all_fields[h].Is_Clearly == true || all_fields[h].Is_Semi_Clearly == true)
                             {
                                 follower--;
                                 continue;
@@ -175,6 +235,9 @@ namespace Pluto.Logic.Algorithmen
                                     current_field_position = h - 1;
 
                                     mainPage.Attampts_Label++;
+
+                                    //last_grid = all_fields[h].Grid_Number;
+
                                     break;
                                 }
                                 else
@@ -196,6 +259,7 @@ namespace Pluto.Logic.Algorithmen
                                 all_fields[h].Number = 0;
                                 all_fields[h].Skips = 0;
                                 all_fields[h].Is_Saturated = false;
+                                all_fields[h].Is_Semi_Clearly = false;
                             }
 
                             follower--;
@@ -207,7 +271,6 @@ namespace Pluto.Logic.Algorithmen
             //Setzt alle Speicherpunkte und Skipliste auf Standard 
             MainPage.field_position_marker = 0;
             MainPage.field_stop_position = 1;
-            MainPage.block_stop_position = 0;
             return true;
         }
 
@@ -236,7 +299,6 @@ namespace Pluto.Logic.Algorithmen
                 {
                     MainPage.field_position_marker = all_fields[field_position].Id;
                     MainPage.field_stop_position = picked_number;
-                    MainPage.block_stop_position = all_fields[field_position].Grid_Number;
                     MainPage.skip_stop_position = skipiterration;
                     token.ThrowIfCancellationRequested();
                     return false;
@@ -342,7 +404,7 @@ namespace Pluto.Logic.Algorithmen
                     token.ThrowIfCancellationRequested();
                 }
 
-                //Schaut ob im Blocklevel von der aktuellen Zahl zwei Felder vorhanden sind und ob diese gelockt sind 
+                //Schaut ob im Blocklevel von der aktuellen Zahl zwei Felder vorhanden sind
                 if (blocks.Where(y => y.Number == i).Count() == 2)
                 {
                     //Erstellt eine Liste von den Feldern die die gleiche Zahl haben und gelockt sind
@@ -558,6 +620,300 @@ namespace Pluto.Logic.Algorithmen
 
                                     //Setzt das Feld auf Einzige
                                     MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Is_Clearly = true;
+
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    if (MainPage.dificulty_marker == "Leicht")
+                                    {
+                                        await Task.Delay(100);
+                                    }
+                                    if (MainPage.dificulty_marker == "Mittel")
+                                    {
+                                        await Task.Delay(80);
+                                    }
+                                    if (MainPage.dificulty_marker == "Schwer")
+                                    {
+                                        await Task.Delay(50);
+                                    }
+                                    if (MainPage.dificulty_marker == "Experte")
+                                    {
+                                        await Task.Delay(40);
+                                    }
+                                    if (MainPage.dificulty_marker == "Meister")
+                                    {
+                                        await Task.Delay(30);
+                                    }
+                                    if (MainPage.dificulty_marker == "Extrem")
+                                    {
+                                        await Task.Delay(20);
+                                    }
+                                }
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Überprüft ob es in dem Blocks auf einem Level eine Zahl gibt die nur eine Möglichkeit besitzt und wenn ja dann wir dieses Zahl eingesetzt   
+        /// </summary>
+        public async Task<bool> Check_Blocklevel_For_Semi_Clearly(List<Field> all_fields, List<Field> blocks, string flow, CancellationToken token, int current_grid, int current_field_id)
+        {
+            //Erstellt eine Liste die alle Gridnummern beinhalten die im Blocklevel sind 
+            List<int> grids = new List<int>();
+            for (int g = 0; g < 27; g = g + 9)
+            {
+                grids.Add(blocks[g].Grid_Number);
+            }
+
+            //Erstellt eine Liste die alle spezielen Levelnummern beinhalten die im Blocklevel sind 
+            List<int> levels = new List<int>();
+            for (int i = 0; i < 3; i++)
+            {
+                if (flow == "vertikal")
+                {
+                    levels.Add(blocks[3 * i].Column_Number);
+                }
+                if (flow == "horizontal")
+                {
+                    levels.Add(blocks[i].Row_Number);
+                }
+            }
+
+            //Geht alle Zahlen von 1 bis 10 durch
+            for (int i = 1; i < 10; i++)
+            {
+                //Wenn der Prozess abgebrochen wird
+                if (token.IsCancellationRequested)
+                {
+                    MainPage.field_position_marker = current_field_id;
+                    token.ThrowIfCancellationRequested();
+                }
+
+                //Schaut ob im Blocklevel von der aktuellen Zahl zwei Felder vorhanden sind
+                if (blocks.Where(y => y.Number == i).Count() == 2)
+                {
+                    //Erstellt eine Liste von den Feldern die die gleiche Zahl haben und gelockt sind
+                    List<Field> selectet_fields = blocks.Where(y => y.Number == i).ToList();
+
+                    //Ermittelt in welchem Block sich das Feld befindet wo die Zahl fehlt
+                    int missing_block = 0;
+                    foreach (int gr in grids)
+                    {
+                        if (selectet_fields.Where(x => x.Grid_Number == gr).Count() == 0)
+                        {
+                            missing_block = gr;
+                            break;
+                        }
+                    }
+
+                    //Ermittelt auf welchem Level sich das Feld befindet wo die Zahl fehlt
+                    int missing_level = 0;
+                    foreach (int l in levels)
+                    {
+                        if (flow == "horizontal")
+                        {
+                            if (selectet_fields.Where(x => x.Row_Number == l).Count() == 0)
+                            {
+                                missing_level = l;
+                                break;
+                            }
+                        }
+                        if (flow == "vertikal")
+                        {
+                            if (selectet_fields.Where(x => x.Column_Number == l).Count() == 0)
+                            {
+                                missing_level = l;
+                                break;
+                            }
+                        }
+                    }
+
+                    //Ermittelt wie viele Felder auf dem Level die Zahl 0 haben 
+                    List<int> missing_fields = new List<int>();
+                    if (flow == "horizontal")
+                    {
+                        if (blocks.Where(x => x.Row_Number == missing_level && x.Number == 0).Count() != 0)
+                        {
+                            foreach (Field f in blocks.Where(x => x.Row_Number == missing_level && x.Number == 0).ToList())
+                            {
+                                missing_fields.Add(f.Column_Number);
+                            }
+                        }
+                    }
+                    if (flow == "vertikal")
+                    {
+                        if (blocks.Where(x => x.Column_Number == missing_level && x.Number == 0).Count() != 0)
+                        {
+                            foreach (Field f in blocks.Where(x => x.Column_Number == missing_level && x.Number == 0).ToList())
+                            {
+                                missing_fields.Add(f.Row_Number);
+                            }
+                        }
+                    }
+
+                    //Das aktuelle Feld was bearbeitet werden soll
+                    Field selectet_field = new Field();
+
+                    //Ermittelt die wirklichen Möglichkeiten für diese Zahl die den Regeln entsprechen
+                    List<int> realy_possible = new List<int>();
+
+                    //Geht jede Position in dem Level durch
+                    foreach (int l in missing_fields)
+                    {
+                        //Ermittelt das Feld wo die Zahl fehlt in der Reihe
+                        if (flow == "horizontal")
+                        {
+                            if (blocks.Where(x => x.Grid_Number == missing_block && x.Row_Number == missing_level && x.Column_Number == l && x.Number == 0).Count() != 0)
+                            {
+                                selectet_field = blocks.Where(x => x.Grid_Number == missing_block && x.Row_Number == missing_level && x.Column_Number == l && x.Number == 0).First();
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+
+                        //Ermittelt das Feld wo die Zahl fehlt in der Spalte
+                        if (flow == "vertikal")
+                        {
+                            if (blocks.Where(x => x.Grid_Number == missing_block && x.Column_Number == missing_level && x.Row_Number == l && x.Number == 0).Count() != 0)
+                            {
+                                selectet_field = blocks.Where(x => x.Grid_Number == missing_block && x.Column_Number == missing_level && x.Row_Number == l && x.Number == 0).First();
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+
+                        //Wenn das ausgewählte Feld hinter oder in dem aktuellen Block in der Brute-Force-Schleife sich befindet dann überspringen
+                        if (selectet_field.Grid_Number <= current_grid)
+                            continue;
+
+                        // Platzhalter Feld für das aktuelle Feld
+                        Field Placeholder = new Field() { Id = selectet_field.Id, Number = i, Column_Number = selectet_field.Column_Number, Row_Number = selectet_field.Row_Number, Grid_Number = selectet_field.Grid_Number, Is_Fault = selectet_field.Is_Fault, Is_Select = selectet_field.Is_Select, Number_Background_Color = selectet_field.Number_Background_Color, Number_Color = selectet_field.Number_Color, Visible_Number = selectet_field.Visible_Number, Is_Locked = selectet_field.Is_Locked };
+
+                        //Überprüft ob diese Zahl im aktuellen Spielfeld erlaubt ist
+                        List<bool> checklist = new List<bool>();
+                        List<Field> faults = new List<Field>();
+                        (checklist, faults) = GameRules.Check_Rules_OneMove(all_fields, Placeholder);
+
+                        //Wenn alle Regeln korrekt sind und es keine Fehlerfelder gibt
+                        if (checklist.Contains(false) == false && faults.Count == 0)
+                        {
+                            realy_possible.Add(l);
+                        }
+                    }
+
+                    //Wenn für dieses Feld nur diese einzige Möglichkeit besteht
+                    if (realy_possible.Count() == 1)
+                    {
+                        //Ermittelt das Feld wo die Zahl fehlt in der Reihe
+                        if (flow == "horizontal")
+                        {
+                            if (blocks.Where(x => x.Grid_Number == missing_block && x.Row_Number == missing_level && x.Column_Number == realy_possible[0] && x.Number == 0).Count() != 0)
+                            {
+                                selectet_field = blocks.Where(x => x.Grid_Number == missing_block && x.Row_Number == missing_level && x.Column_Number == realy_possible[0] && x.Number == 0).First();
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+
+                        //Ermittelt das Feld wo die Zahl fehlt in der Spalte
+                        if (flow == "vertikal")
+                        {
+                            if (blocks.Where(x => x.Grid_Number == missing_block && x.Column_Number == missing_level && x.Row_Number == realy_possible[0] && x.Number == 0).Count() != 0)
+                            {
+                                selectet_field = blocks.Where(x => x.Grid_Number == missing_block && x.Column_Number == missing_level && x.Row_Number == realy_possible[0] && x.Number == 0).First();
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+
+                        //Setzt die Zahl zum aktuellen Feld
+                        selectet_field.Number = i;
+
+                        //Setzt das Feld auf Einzige
+                        selectet_field.Is_Semi_Clearly = true;
+
+                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                        if (MainPage.dificulty_marker == "Leicht")
+                        {
+                            await Task.Delay(100);
+                        }
+                        if (MainPage.dificulty_marker == "Mittel")
+                        {
+                            await Task.Delay(80);
+                        }
+                        if (MainPage.dificulty_marker == "Schwer")
+                        {
+                            await Task.Delay(50);
+                        }
+                        if (MainPage.dificulty_marker == "Experte")
+                        {
+                            await Task.Delay(40);
+                        }
+                        if (MainPage.dificulty_marker == "Meister")
+                        {
+                            await Task.Delay(30);
+                        }
+                        if (MainPage.dificulty_marker == "Extrem")
+                        {
+                            await Task.Delay(20);
+                        }
+
+                        //Geht alle Blocks durch und schaut ob es eindeutige Felder existieren und ändert sie zu diese
+                        for (int p = 0; p < 9; p++)
+                        {
+                            //Wenn der Block schon komplett ausgefüllt ist überspringe
+                            if (MainPage.Fields[p].Where(x => x.Number == 0).Count() == 0)
+                                continue;
+
+                            //Geht die Zahlen durch
+                            for (int z = 1; z < 10; z++)
+                            {
+                                realy_possible = new List<int>();
+
+                                //Geht die Felder in dem Block durch
+                                foreach (Field f in MainPage.Fields[p])
+                                {
+                                    //Wenn Feld gelockt oder eindeutig dann überspringe
+                                    if (f.Is_Clearly == true || f.Is_Locked == true || f.Is_Semi_Clearly == true)
+                                        continue;
+
+                                    // Platzhalter Feld für das ausgewählte Feld
+                                    Field Placeholder2 = new Field() { Id = f.Id, Column_Number = f.Column_Number, Number = z, Row_Number = f.Row_Number, Grid_Number = f.Grid_Number, Is_Fault = f.Is_Fault, Is_Select = f.Is_Select, Number_Background_Color = f.Number_Background_Color, Number_Color = f.Number_Color, Visible_Number = f.Visible_Number, Is_Locked = f.Is_Locked };
+
+                                    //Überprüft ob diese Zahl im aktuellen Spielfeld erlaubt ist
+                                    List<bool> checklist = new List<bool>();
+                                    List<Field> faults = new List<Field>();
+
+                                    (checklist, faults) = GameRules.Check_Rules_OneMove(all_fields, Placeholder2);
+
+                                    //Wenn alle Regeln korrekt sind und es keine Fehlerfelder gibt
+                                    if (checklist.Contains(false) == false && faults.Count == 0)
+                                    {
+                                        realy_possible.Add(Placeholder2.Id);
+                                    }
+                                }
+
+                                //Wenn für dieses Feld nur diese einzige Möglichkeit besteht
+                                if (realy_possible.Count() == 1)
+                                {
+                                    //Setzt die Zahl zum aktuellen Feld
+                                    MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Number = z;
+
+                                    //Setzt das Feld auf Einzige
+                                    MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Is_Semi_Clearly = true;
 
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     if (MainPage.dificulty_marker == "Leicht")

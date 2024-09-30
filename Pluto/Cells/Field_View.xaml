@@ -15,9 +15,13 @@
 
     <Grid  BackgroundColor="{Binding Number_Background_Color}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
         <Label Text="{Binding Visible_Number}" VerticalOptions="CenterAndExpand" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="CenterAndExpand" FontSize="Title" TextColor="{Binding Number_Color}" />
+        
         <Label Text="{Binding Visible_Skips}" VerticalOptions="StartAndExpand" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="End" FontSize="12" TextColor="Gray" />
         <Label Text="max" VerticalOptions="End" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="End" FontSize="8" TextColor="DarkRed" IsVisible="{Binding Is_Saturated}" />
+        
         <Label Text="clearly" VerticalOptions="End" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="Start" FontSize="8" TextColor="DarkRed" IsVisible="{Binding Is_Clearly}" />
+        <Label Text="semi-clearly" VerticalOptions="End" IsEnabled="True" BackgroundColor="Transparent" HorizontalOptions="Start" FontSize="8" TextColor="Orange" IsVisible="{Binding Is_Semi_Clearly}" />
+
         <CollectionView ItemsSource="{Binding Placeholder_Number_Horizontal}" VerticalOptions="Start"  BackgroundColor="Transparent" HorizontalOptions="End">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="1"/>

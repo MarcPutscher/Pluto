@@ -141,6 +141,13 @@ namespace Pluto.Pages
                         }
                     }
                 }
+                else
+                {
+                    foreach (Number n in Numbers)
+                    {
+                        n.Is_Select = false;
+                    }
+                }
 
                 if (current.Visible_Number == string.Empty)
                 {
@@ -389,6 +396,7 @@ namespace Pluto.Pages
                         f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
                         f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                         f.Is_Clearly = false;
+                        f.Is_Semi_Clearly = false;
                     }
                 }
 
@@ -405,7 +413,6 @@ namespace Pluto.Pages
 
                 field_position_marker =  0 ;
                 field_stop_position = 1;
-                block_stop_position = 0;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
@@ -503,13 +510,13 @@ namespace Pluto.Pages
                             f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
                             f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                             f.Is_Clearly = false;
+                            f.Is_Semi_Clearly = false;
                         }
                     }
                 }
 
                 field_position_marker = 0;
                 field_stop_position = 1;
-                block_stop_position = 0;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
@@ -553,6 +560,7 @@ namespace Pluto.Pages
                             f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
                             f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                             f.Is_Clearly = false;
+                            f.Is_Semi_Clearly = false;
                         }
                     }
                 }
@@ -572,7 +580,6 @@ namespace Pluto.Pages
                 stopwatch = null;
                 field_position_marker = 0;
                 field_stop_position = 1;
-                block_stop_position = 0;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
@@ -628,7 +635,6 @@ namespace Pluto.Pages
                 {
                     field_position_marker = 0;
                     field_stop_position = 1;
-                    block_stop_position = 0;
                     skip_stop_position = 0;
                     Possebilities_Log = new List<Possebilitie>();
                     Attampts_Label = 0;
@@ -901,7 +907,6 @@ namespace Pluto.Pages
 
                 field_position_marker = 0;
                 field_stop_position = 1;
-                block_stop_position = 0;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
@@ -1011,6 +1016,7 @@ namespace Pluto.Pages
                                 f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
                                 f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                                 f.Is_Clearly = false;
+                                f.Is_Semi_Clearly = false;
                                 follower++;
 
                                 if (f.Number != 0 && f.Is_Fault == false)

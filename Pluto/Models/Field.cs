@@ -227,6 +227,17 @@ namespace Pluto.Models
                 is_clearly = value; OnPropertyChanged(nameof(Is_Clearly));
             }
         }
+        bool is_semi_clearly = false;
+        public bool Is_Semi_Clearly
+        {
+            get { return is_semi_clearly; }
+            set
+            {
+                if (Is_Semi_Clearly == value)
+                    return;
+                is_semi_clearly = value; OnPropertyChanged(nameof(Is_Semi_Clearly));
+            }
+        }
 
         Color number_color = Color.FromArgb("#278A15");
         public Color Number_Color

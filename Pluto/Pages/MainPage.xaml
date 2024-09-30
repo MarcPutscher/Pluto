@@ -430,6 +430,9 @@
                             <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Abgebrochen">
                                 <Setter Property="IsVisible" Value="True"></Setter>
                             </DataTrigger>
+                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Ungelöst">
+                                <Setter Property="IsVisible" Value="True"></Setter>
+                            </DataTrigger>
                         </Border.Triggers>
                     </Border>
                     <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#991E0E" StrokeThickness="3" IsVisible="False" BackgroundColor="#692424" Padding="3,1,3,1" HorizontalOptions="End" VerticalOptions="Center">
@@ -748,13 +751,13 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Playground">
                             <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" Spacing="5" BackgroundColor="Transparent">
-                                <Label Text="Spielfeld" HorizontalOptions="Center" TextColor="#757178"/>
-                                <Label Text="{Binding Id}" TextColor="#757178"/>
-                                <Label Text=" | " TextColor="#757178"/>
-                                <Label Text="{Binding Field_With_Numbers_Count}" HorizontalOptions="Center" TextColor="#757178"/>
-                                <Label Text="Felder" TextColor="#757178"/>
-                                <Label Text=" | " TextColor="#757178"/>
-                                <Label Text="{Binding Difficulty}" HorizontalOptions="Center" TextColor="#757178"/>
+                                <Label Text="Spielfeld" HorizontalOptions="Center" TextColor="#757178" VerticalOptions="Center"/>
+                                <Label Text="{Binding Id}" TextColor="#757178" VerticalOptions="Center"/>
+                                <Label Text=" | " TextColor="#757178" VerticalOptions="Center"/>
+                                <Label Text="{Binding Field_With_Numbers_Count}" HorizontalOptions="Center" TextColor="#757178" VerticalOptions="Center"/>
+                                <Label Text="Felder" TextColor="#757178" VerticalOptions="Center"/>
+                                <Label Text=" | " TextColor="#757178" VerticalOptions="Center"/>
+                                <Label Text="{Binding Difficulty}" HorizontalOptions="Center" TextColor="#757178" VerticalOptions="Center"/>
                                 <StackLayout.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="Playground_Clicked" BindingContext="{Binding .}"/>
                                 </StackLayout.GestureRecognizers>
@@ -763,6 +766,12 @@
                                         <Setter Property="BackgroundColor" Value="#3D076F"/>
                                     </DataTrigger>
                                 </StackLayout.Triggers>
+                                <StackLayout.HeightRequest>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="30"/>
+                                        <On Platform="WinUI" Value="20"/>
+                                    </OnPlatform>
+                                </StackLayout.HeightRequest>
                             </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
