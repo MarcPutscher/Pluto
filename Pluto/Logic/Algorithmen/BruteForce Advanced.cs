@@ -58,6 +58,10 @@ namespace Pluto.Logic.Algorithmen
                 vertikal_blocks.Add(list);
             }
 
+            //Ermittelt die Zahlen in Feldern die garnicht möglich wären
+            if (MainPage.Denails.Count == 0)
+                await Check_For_Denails(all_fields);
+
             //Ermittelt zuerst die Eindeutigen Zahlen
             for (bool playground_is_solved = false; playground_is_solved == false;)
             {
@@ -307,6 +311,10 @@ namespace Pluto.Logic.Algorithmen
                 //Erhöht die Zahl im platzhalter Feld
                 field.Number = field.Number + 1;
 
+                //Überprüft ob diese Zahl in diesem Feld überhaupt möglich ist
+                if (MainPage.Denails.Where(x => x.Number == field.Number && x.Fields.Contains(field) == true).Any())
+                    continue;
+
                 //Überprüft ob diese Zahl im aktuellen Spielfeld erlaubt ist
                 (checklist, faults) = GameRules.Check_Rules_OneMove(all_fields, field);
 
@@ -392,6 +400,79 @@ namespace Pluto.Logic.Algorithmen
                 if (flow == "horizontal")
                 {
                     levels.Add(blocks[i].Row_Number);
+                }
+            }
+
+            //Geht alle Blocks durch und schaut ob es eindeutige Felder existieren und ändert sie zu diese
+            for (int p = 0; p < 9; p++)
+            {
+                //Wenn der Block schon komplett ausgefüllt ist überspringe
+                if (MainPage.Fields[p].Where(x => x.Number == 0).Count() == 0)
+                    continue;
+
+                //Geht die Zahlen durch
+                for (int z = 1; z < 10; z++)
+                {
+                    List<int> realy_possible = new List<int>();
+
+                    //Geht die Felder in dem Block durch
+                    foreach (Field f in MainPage.Fields[p])
+                    {
+                        //Wenn Feld gelockt oder eindeutig dann überspringe
+                        if (f.Is_Clearly == true || f.Is_Locked == true)
+                            continue;
+
+                        // Platzhalter Feld für das ausgewählte Feld
+                        Field Placeholder2 = new Field() { Id = f.Id, Column_Number = f.Column_Number, Number = z, Row_Number = f.Row_Number, Grid_Number = f.Grid_Number, Is_Fault = f.Is_Fault, Is_Select = f.Is_Select, Number_Background_Color = f.Number_Background_Color, Number_Color = f.Number_Color, Visible_Number = f.Visible_Number, Is_Locked = f.Is_Locked };
+
+                        //Überprüft ob diese Zahl im aktuellen Spielfeld erlaubt ist
+                        List<bool> checklist = new List<bool>();
+                        List<Field> faults = new List<Field>();
+
+                        (checklist, faults) = GameRules.Check_Rules_OneMove(all_fields, Placeholder2);
+
+                        //Wenn alle Regeln korrekt sind und es keine Fehlerfelder gibt
+                        if (checklist.Contains(false) == false && faults.Count == 0)
+                        {
+                            realy_possible.Add(Placeholder2.Id);
+                        }
+                    }
+
+                    //Wenn für dieses Feld nur diese einzige Möglichkeit besteht
+                    if (realy_possible.Count() == 1)
+                    {
+                        //Setzt die Zahl zum aktuellen Feld
+                        MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Number = z;
+
+                        //Setzt das Feld auf Einzige
+                        MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Is_Clearly = true;
+
+                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                        if (MainPage.dificulty_marker == "Leicht")
+                        {
+                            await Task.Delay(100);
+                        }
+                        if (MainPage.dificulty_marker == "Mittel")
+                        {
+                            await Task.Delay(80);
+                        }
+                        if (MainPage.dificulty_marker == "Schwer")
+                        {
+                            await Task.Delay(50);
+                        }
+                        if (MainPage.dificulty_marker == "Experte")
+                        {
+                            await Task.Delay(40);
+                        }
+                        if (MainPage.dificulty_marker == "Meister")
+                        {
+                            await Task.Delay(30);
+                        }
+                        if (MainPage.dificulty_marker == "Extrem")
+                        {
+                            await Task.Delay(20);
+                        }
+                    }
                 }
             }
 
@@ -577,79 +658,6 @@ namespace Pluto.Logic.Algorithmen
                             await Task.Delay(20);
                         }
 
-                        //Geht alle Blocks durch und schaut ob es eindeutige Felder existieren und ändert sie zu diese
-                        for(int p = 0;p<9;p++)
-                        {
-                            //Wenn der Block schon komplett ausgefüllt ist überspringe
-                            if (MainPage.Fields[p].Where(x => x.Number == 0).Count() == 0)
-                                continue;
-
-                            //Geht die Zahlen durch
-                            for(int z = 1; z<10;z++)
-                            {
-                                realy_possible = new List<int>();
-
-                                //Geht die Felder in dem Block durch
-                                foreach (Field f in MainPage.Fields[p])
-                                {
-                                    //Wenn Feld gelockt oder eindeutig dann überspringe
-                                    if (f.Is_Clearly == true || f.Is_Locked == true)
-                                        continue;
-
-                                    // Platzhalter Feld für das ausgewählte Feld
-                                    Field Placeholder2 = new Field() { Id = f.Id, Column_Number = f.Column_Number, Number = z, Row_Number = f.Row_Number, Grid_Number = f.Grid_Number, Is_Fault = f.Is_Fault, Is_Select = f.Is_Select, Number_Background_Color = f.Number_Background_Color, Number_Color = f.Number_Color, Visible_Number = f.Visible_Number, Is_Locked = f.Is_Locked };
-
-                                    //Überprüft ob diese Zahl im aktuellen Spielfeld erlaubt ist
-                                    List<bool> checklist = new List<bool>();
-                                    List<Field> faults = new List<Field>();
-
-                                    (checklist, faults) = GameRules.Check_Rules_OneMove(all_fields, Placeholder2);
-
-                                    //Wenn alle Regeln korrekt sind und es keine Fehlerfelder gibt
-                                    if (checklist.Contains(false) == false && faults.Count == 0)
-                                    {
-                                        realy_possible.Add(Placeholder2.Id);
-                                    }
-                                }
-
-                                //Wenn für dieses Feld nur diese einzige Möglichkeit besteht
-                                if (realy_possible.Count() == 1)
-                                {
-                                    //Setzt die Zahl zum aktuellen Feld
-                                    MainPage.Fields[p].FirstOrDefault<Field>(x=>x.Id == realy_possible.First()).Number = z;
-
-                                    //Setzt das Feld auf Einzige
-                                    MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Is_Clearly = true;
-
-                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                                    if (MainPage.dificulty_marker == "Leicht")
-                                    {
-                                        await Task.Delay(100);
-                                    }
-                                    if (MainPage.dificulty_marker == "Mittel")
-                                    {
-                                        await Task.Delay(80);
-                                    }
-                                    if (MainPage.dificulty_marker == "Schwer")
-                                    {
-                                        await Task.Delay(50);
-                                    }
-                                    if (MainPage.dificulty_marker == "Experte")
-                                    {
-                                        await Task.Delay(40);
-                                    }
-                                    if (MainPage.dificulty_marker == "Meister")
-                                    {
-                                        await Task.Delay(30);
-                                    }
-                                    if (MainPage.dificulty_marker == "Extrem")
-                                    {
-                                        await Task.Delay(20);
-                                    }
-                                }
-                            }
-                        }
-
                         return true;
                     }
                 }
@@ -681,6 +689,79 @@ namespace Pluto.Logic.Algorithmen
                 if (flow == "horizontal")
                 {
                     levels.Add(blocks[i].Row_Number);
+                }
+            }
+
+            //Geht alle Blocks durch und schaut ob es eindeutige Felder existieren und ändert sie zu diese
+            for (int p = 0; p < 9; p++)
+            {
+                //Wenn der Block schon komplett ausgefüllt ist überspringe
+                if (MainPage.Fields[p].Where(x => x.Number == 0).Count() == 0)
+                    continue;
+
+                //Geht die Zahlen durch
+                for (int z = 1; z < 10; z++)
+                {
+                    List<int> realy_possible = new List<int>();
+
+                    //Geht die Felder in dem Block durch
+                    foreach (Field f in MainPage.Fields[p])
+                    {
+                        //Wenn Feld gelockt oder eindeutig dann überspringe
+                        if (f.Is_Clearly == true || f.Is_Locked == true || f.Is_Semi_Clearly == true)
+                            continue;
+
+                        // Platzhalter Feld für das ausgewählte Feld
+                        Field Placeholder2 = new Field() { Id = f.Id, Column_Number = f.Column_Number, Number = z, Row_Number = f.Row_Number, Grid_Number = f.Grid_Number, Is_Fault = f.Is_Fault, Is_Select = f.Is_Select, Number_Background_Color = f.Number_Background_Color, Number_Color = f.Number_Color, Visible_Number = f.Visible_Number, Is_Locked = f.Is_Locked };
+
+                        //Überprüft ob diese Zahl im aktuellen Spielfeld erlaubt ist
+                        List<bool> checklist = new List<bool>();
+                        List<Field> faults = new List<Field>();
+
+                        (checklist, faults) = GameRules.Check_Rules_OneMove(all_fields, Placeholder2);
+
+                        //Wenn alle Regeln korrekt sind und es keine Fehlerfelder gibt
+                        if (checklist.Contains(false) == false && faults.Count == 0)
+                        {
+                            realy_possible.Add(Placeholder2.Id);
+                        }
+                    }
+
+                    //Wenn für dieses Feld nur diese einzige Möglichkeit besteht
+                    if (realy_possible.Count() == 1)
+                    {
+                        //Setzt die Zahl zum aktuellen Feld
+                        MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Number = z;
+
+                        //Setzt das Feld auf Einzige
+                        MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Is_Semi_Clearly = true;
+
+                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                        if (MainPage.dificulty_marker == "Leicht")
+                        {
+                            await Task.Delay(100);
+                        }
+                        if (MainPage.dificulty_marker == "Mittel")
+                        {
+                            await Task.Delay(80);
+                        }
+                        if (MainPage.dificulty_marker == "Schwer")
+                        {
+                            await Task.Delay(50);
+                        }
+                        if (MainPage.dificulty_marker == "Experte")
+                        {
+                            await Task.Delay(40);
+                        }
+                        if (MainPage.dificulty_marker == "Meister")
+                        {
+                            await Task.Delay(30);
+                        }
+                        if (MainPage.dificulty_marker == "Extrem")
+                        {
+                            await Task.Delay(20);
+                        }
+                    }
                 }
             }
 
@@ -871,85 +952,50 @@ namespace Pluto.Logic.Algorithmen
                             await Task.Delay(20);
                         }
 
-                        //Geht alle Blocks durch und schaut ob es eindeutige Felder existieren und ändert sie zu diese
-                        for (int p = 0; p < 9; p++)
-                        {
-                            //Wenn der Block schon komplett ausgefüllt ist überspringe
-                            if (MainPage.Fields[p].Where(x => x.Number == 0).Count() == 0)
-                                continue;
-
-                            //Geht die Zahlen durch
-                            for (int z = 1; z < 10; z++)
-                            {
-                                realy_possible = new List<int>();
-
-                                //Geht die Felder in dem Block durch
-                                foreach (Field f in MainPage.Fields[p])
-                                {
-                                    //Wenn Feld gelockt oder eindeutig dann überspringe
-                                    if (f.Is_Clearly == true || f.Is_Locked == true || f.Is_Semi_Clearly == true)
-                                        continue;
-
-                                    // Platzhalter Feld für das ausgewählte Feld
-                                    Field Placeholder2 = new Field() { Id = f.Id, Column_Number = f.Column_Number, Number = z, Row_Number = f.Row_Number, Grid_Number = f.Grid_Number, Is_Fault = f.Is_Fault, Is_Select = f.Is_Select, Number_Background_Color = f.Number_Background_Color, Number_Color = f.Number_Color, Visible_Number = f.Visible_Number, Is_Locked = f.Is_Locked };
-
-                                    //Überprüft ob diese Zahl im aktuellen Spielfeld erlaubt ist
-                                    List<bool> checklist = new List<bool>();
-                                    List<Field> faults = new List<Field>();
-
-                                    (checklist, faults) = GameRules.Check_Rules_OneMove(all_fields, Placeholder2);
-
-                                    //Wenn alle Regeln korrekt sind und es keine Fehlerfelder gibt
-                                    if (checklist.Contains(false) == false && faults.Count == 0)
-                                    {
-                                        realy_possible.Add(Placeholder2.Id);
-                                    }
-                                }
-
-                                //Wenn für dieses Feld nur diese einzige Möglichkeit besteht
-                                if (realy_possible.Count() == 1)
-                                {
-                                    //Setzt die Zahl zum aktuellen Feld
-                                    MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Number = z;
-
-                                    //Setzt das Feld auf Einzige
-                                    MainPage.Fields[p].FirstOrDefault<Field>(x => x.Id == realy_possible.First()).Is_Semi_Clearly = true;
-
-                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                                    if (MainPage.dificulty_marker == "Leicht")
-                                    {
-                                        await Task.Delay(100);
-                                    }
-                                    if (MainPage.dificulty_marker == "Mittel")
-                                    {
-                                        await Task.Delay(80);
-                                    }
-                                    if (MainPage.dificulty_marker == "Schwer")
-                                    {
-                                        await Task.Delay(50);
-                                    }
-                                    if (MainPage.dificulty_marker == "Experte")
-                                    {
-                                        await Task.Delay(40);
-                                    }
-                                    if (MainPage.dificulty_marker == "Meister")
-                                    {
-                                        await Task.Delay(30);
-                                    }
-                                    if (MainPage.dificulty_marker == "Extrem")
-                                    {
-                                        await Task.Delay(20);
-                                    }
-                                }
-                            }
-                        }
-
                         return true;
                     }
                 }
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Ermittelt und erstellt eine List an Feldern wo bestimmt Zahlen nicht möglich sind
+        /// </summary>
+        public async Task Check_For_Denails(List<Field> all_fields)
+        {
+            foreach (Field f in all_fields)
+            {
+                if(f.Is_Clearly == true || f.Is_Locked == true)
+                    continue;
+
+                List<bool> checklist = new List<bool>();
+                List<Field> faults = new List<Field>();
+
+                // Platzhalter Feld für das aktuelle Feld
+                Field field = new Field() { Id = f.Id, Number = f.Number, Column_Number = f.Column_Number, Row_Number = f.Row_Number, Grid_Number = f.Grid_Number, Is_Fault = f.Is_Fault, Is_Select = f.Is_Select, Number_Background_Color = f.Number_Background_Color, Number_Color = f.Number_Color, Visible_Number = f.Visible_Number, Is_Locked = f.Is_Locked };
+
+                // Geht jede Zahl nacheinander durch
+                for (int picked_number = 1; picked_number < 10; picked_number++)
+                {
+                    //Erhöht die Zahl im platzhalter Feld
+                    field.Number = picked_number;
+
+                    //Überprüft ob diese Zahl im aktuellen Spielfeld erlaubt ist
+                    (checklist, faults) = GameRules.Check_Rules_OneMove(all_fields, field);
+
+                    //Wenn alle Regeln korrekt sind und es keine Fehlerfelder gibt
+                    if (checklist.Contains(false) == false && faults.Count == 0)
+                        continue;
+                    
+                    if(MainPage.Denails.Where(x=>x.Number == picked_number).Count() == 0)
+                        MainPage.Denails.Add(new Denail() { Number = picked_number });
+
+                    if (MainPage.Denails.Where(x=>x.Number == picked_number && x.Fields.Contains(f) == true ).Count() == 0)
+                        MainPage.Denails.First(x => x.Number == picked_number).Fields.Add(f);
+                }
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using SQLite;
+﻿using MvvmHelpers;
+using SQLite;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +13,12 @@ namespace Pluto.Models
 {
     public class Field : INotifyPropertyChanged
     {
+        public Field() 
+        {
+            Possebilities.CollectionChanged += Possebilities_CollectionChanged;
+            //Denails.CollectionChanged += Denails_CollectionChanged;
+        }
+
         int id;
         [PrimaryKey, AutoIncrement]
         public int Id
@@ -58,7 +66,17 @@ namespace Pluto.Models
                 column_number = value; OnPropertyChanged(nameof(Column_Number));
             }
         }
-
+        int real_grid_number = 0;
+        public int Real_Grid_Number
+        {
+            get { return real_grid_number; }
+            set
+            {
+                if (Real_Grid_Number == value)
+                    return;
+                real_grid_number = value; OnPropertyChanged(nameof(Real_Grid_Number));
+            }
+        }
 
         int number = 0;
         public int Number
@@ -262,36 +280,282 @@ namespace Pluto.Models
             }
         }
 
+        public ObservableCollection<int> Possebilities = new ObservableCollection<int>();
 
-        public ObservableCollection<int> placeholder_number_vertikal = new ObservableCollection<int>();
-        public ObservableCollection<int> Placeholder_Number_Vertikal
+        private void Possebilities_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            get { return placeholder_number_vertikal; }
-            set
+            if (sender == null)
+                return;
+
+            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
             {
-                if (Placeholder_Number_Vertikal == value)
-                    if (Is_Locked == true)
-                {
+                Is_1 = false;
+
+                Is_2 = false;
+
+                Is_3 = false;
+
+                Is_4 = false;
+
+                Is_5 = false;
+
+                Is_6 = false;
+
+                Is_7 = false;
+
+                Is_8 = false;
+
+                Is_9 = false;
+            }
+
+            if (sender is IEnumerable)
+            {
+                if ((sender as IEnumerable).Cast<int>().Count() == 0)
                     return;
+
+                int number = (sender as IEnumerable).Cast<int>().Last();
+
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                {
+                    if (number == 1)
+                        Is_1 = true;
+
+                    if (number == 2)
+                        Is_2 = true;
+
+                    if (number == 3)
+                        Is_3 = true;
+
+                    if (number == 4)
+                        Is_4 = true;
+
+                    if (number == 5)
+                        Is_5 = true;
+
+                    if (number == 6)
+                        Is_6 = true;
+
+                    if (number == 7)
+                        Is_7 = true;
+
+                    if (number == 8)
+                        Is_8 = true;
+
+                    if (number == 9)
+                        Is_9 = true;
                 }
-                placeholder_number_vertikal = value; OnPropertyChanged(nameof(Placeholder_Number_Vertikal));
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                {
+                    for ( int i = 1; i < 10; i++)
+                    {
+                        if(!(sender as IEnumerable).Cast<int>().Contains(i))
+                        {
+                            if (i == 1)
+                                Is_1 = false;
+
+                            if (i == 2)
+                                Is_2 = false;
+
+                            if (i == 3)
+                                Is_3 = false;
+
+                            if (i == 4)
+                                Is_4 = false;
+
+                            if (i == 5)
+                                Is_5 = false;
+
+                            if (i == 6)
+                                Is_6 = false;
+
+                            if (i == 7)
+                                Is_7 = false;
+
+                            if (i == 8)
+                                Is_8 = false;
+
+                            if (i == 9)
+                                Is_9 = false;
+                        }
+                    }
+                }
             }
         }
 
-        public ObservableCollection<int> placeholder_number_horizontal = new ObservableCollection<int>();
-        public ObservableCollection<int> Placeholder_Number_Horizontal
+        //private void Denails_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (sender == null)
+        //        return;
+
+        //    if (sender is IEnumerable)
+        //    {
+        //        if ((sender as IEnumerable).Cast<int>().Count() == 0)
+        //            return;
+
+        //        int number = (sender as IEnumerable).Cast<int>().Last();
+
+        //        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+        //        {
+        //            if (number == 1)
+        //                Is_1 = true;
+
+        //            if (number == 2)
+        //                Is_2 = true;
+
+        //            if (number == 3)
+        //                Is_3 = true;
+
+        //            if (number == 4)
+        //                Is_4 = true;
+
+        //            if (number == 5)
+        //                Is_5 = true;
+
+        //            if (number == 6)
+        //                Is_6 = true;
+
+        //            if (number == 7)
+        //                Is_7 = true;
+
+        //            if (number == 8)
+        //                Is_8 = true;
+
+        //            if (number == 9)
+        //                Is_9 = true;
+        //        }
+        //        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+        //        {
+        //            if (number == 1)
+        //                Is_1 = false;
+
+        //            if (number == 2)
+        //                Is_2 = false;
+
+        //            if (number == 3)
+        //                Is_3 = false;
+
+        //            if (number == 4)
+        //                Is_4 = false;
+
+        //            if (number == 5)
+        //                Is_5 = false;
+
+        //            if (number == 6)
+        //                Is_6 = false;
+
+        //            if (number == 7)
+        //                Is_7 = false;
+
+        //            if (number == 8)
+        //                Is_8 = false;
+
+        //            if (number == 9)
+        //                Is_9 = false;
+        //        }
+        //    }
+        //}
+
+        bool is_1 = false;
+        public bool Is_1
         {
-            get { return placeholder_number_horizontal; }
+            get { return is_1; }
             set
             {
-                if (Placeholder_Number_Horizontal == value)
-                    if (Is_Locked == true)
-                    {
-                        return;
-                    }
-                placeholder_number_horizontal = value; OnPropertyChanged(nameof(Placeholder_Number_Horizontal));
+                if (Is_1 == value)
+                    return;
+                is_1 = value; OnPropertyChanged(nameof(Is_1));
             }
         }
+        bool is_2 = false;
+        public bool Is_2
+        {
+            get { return is_2; }
+            set
+            {
+                if (Is_2 == value)
+                    return;
+                is_2 = value; OnPropertyChanged(nameof(Is_2));
+            }
+        }
+        bool is_3 = false;
+        public bool Is_3
+        {
+            get { return is_3; }
+            set
+            {
+                if (Is_3 == value)
+                    return;
+                is_3 = value; OnPropertyChanged(nameof(Is_3));
+            }
+        }
+        bool is_4 = false;
+        public bool Is_4
+        {
+            get { return is_4; }
+            set
+            {
+                if (Is_4 == value)
+                    return;
+                is_4 = value; OnPropertyChanged(nameof(Is_4));
+            }
+        }
+        bool is_5 = false;
+        public bool Is_5
+        {
+            get { return is_5; }
+            set
+            {
+                if (Is_5 == value)
+                    return;
+                is_5 = value; OnPropertyChanged(nameof(Is_5));
+            }
+        }
+        bool is_6 = false;
+        public bool Is_6
+        {
+            get { return is_6; }
+            set
+            {
+                if (Is_6 == value)
+                    return;
+                is_6 = value; OnPropertyChanged(nameof(Is_6));
+            }
+        }
+        bool is_7 = false;
+        public bool Is_7
+        {
+            get { return is_7; }
+            set
+            {
+                if (Is_7 == value)
+                    return;
+                is_7 = value; OnPropertyChanged(nameof(Is_7));
+            }
+        }
+        bool is_8 = false;
+        public bool Is_8
+        {
+            get { return is_8; }
+            set
+            {
+                if (Is_8 == value)
+                    return;
+                is_8 = value; OnPropertyChanged(nameof(Is_8));
+            }
+        }
+        bool is_9 = false;
+        public bool Is_9
+        {
+            get { return is_9; }
+            set
+            {
+                if (Is_9 == value)
+                    return;
+                is_9 = value; OnPropertyChanged(nameof(Is_9));
+            }
+        }
+
+        //public ObservableCollection<int> Denails = new ObservableCollection<int>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

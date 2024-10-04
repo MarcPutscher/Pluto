@@ -22,51 +22,104 @@ namespace Pluto.Pages
 
             InitializeComponent();
 
+            //int id_follower = 0;
+            //int row_follower = 1;
+            //int column_follower = 1;
+            //int count = 1;
+            //for (int i = 1; i < 10; i++)
+            //{
+            //    if (i == 1 || i == 2 || i == 3)
+            //    {
+            //        row_follower = 1;
+            //        count = 1;
+            //    }
+            //    if (i == 4 || i == 5 || i == 6)
+            //    {
+            //        row_follower = 4;
+            //        count = 2;
+            //    }
+            //    if (i == 7 || i == 8 || i == 9)
+            //    {
+            //        row_follower = 7;
+            //        count = 3;
+            //    }
+            //    if (i == 1 || i == 4 || i == 7)
+            //    {
+            //        column_follower = 1;
+            //    }
+            //    if (i == 2 || i == 5 || i == 8)
+            //    {
+            //        column_follower = 4;
+            //    }
+            //    if (i == 3 || i == 6 || i == 9)
+            //    {
+            //        column_follower = 7;
+            //    }
+
+            //    List<Field> list = new List<Field>();
+            //    for (int j = 1; j < 10; j++)
+            //    {
+            //        if (row_follower > 3*count)
+            //        {
+            //            row_follower = 3*count -2;
+            //            column_follower++;
+            //        }
+
+
+            //        list.Add(new Field() { Id = id_follower, Grid_Number = i, Row_Number = row_follower, Column_Number = column_follower});
+            //        id_follower++;
+            //        row_follower++;
+            //    }
+
+            //    Fields.Add(list.ToObservableCollection());
+            //}
+
+
             int id_follower = 0;
             int row_follower = 1;
+            int grid_follower = 0;
             int column_follower = 1;
             int count = 1;
             for (int i = 1; i < 10; i++)
             {
-                if (i == 1 || i == 2 || i == 3)
-                {
-                    row_follower = 1;
-                    count = 1;
-                }
-                if (i == 4 || i == 5 || i == 6)
-                {
-                    row_follower = 4;
-                    count = 2;
-                }
-                if (i == 7 || i == 8 || i == 9)
-                {
-                    row_follower = 7;
-                    count = 3;
-                }
-                if (i == 1 || i == 4 || i == 7)
-                {
-                    column_follower = 1;
-                }
-                if (i == 2 || i == 5 || i == 8)
-                {
-                    column_follower = 4;
-                }
-                if (i == 3 || i == 6 || i == 9)
-                {
-                    column_follower = 7;
-                }
+                if(i == 1)
+                { row_follower = 1; column_follower = 1; count = 1;}
+
+                if (i == 2)
+                { row_follower = 1; column_follower = 4; count = 1; }
+
+                if (i == 3)
+                { row_follower = 1; column_follower = 7; count = 1; }
+
+                if (i == 4)
+                { row_follower = 4; column_follower = 7; count = 2; grid_follower = 2; }
+
+                if (i == 5)
+                { row_follower = 4; column_follower = 4; count = 2; grid_follower = 0; }
+
+                if (i == 6)
+                { row_follower = 4; column_follower = 1; count = 2; grid_follower = -2; }
+
+                if (i == 7)
+                { row_follower = 7; column_follower = 1; count = 3; grid_follower = 0; }
+
+                if (i == 8)
+                { row_follower = 7; column_follower = 4; count = 3; grid_follower = 0; }
+
+                if (i == 9)
+                { row_follower = 7; column_follower = 7; count = 3; grid_follower = 0; }
 
                 List<Field> list = new List<Field>();
                 for (int j = 1; j < 10; j++)
                 {
-                    if (row_follower > 3*count)
+                    if (row_follower > 3 * count)
                     {
-                        row_follower = 3*count -2;
+                        row_follower = 3 * count - 2;
                         column_follower++;
                     }
 
 
-                    list.Add(new Field() { Id = id_follower, Grid_Number = i, Row_Number = row_follower, Column_Number = column_follower});
+                    list.Add(new Field() { Id = id_follower,  Grid_Number = i+grid_follower, Real_Grid_Number = i, Row_Number = row_follower, Column_Number = column_follower });
                     id_follower++;
                     row_follower++;
                 }
@@ -74,12 +127,13 @@ namespace Pluto.Pages
                 Fields.Add(list.ToObservableCollection());
             }
 
+
             Grid1.ItemsSource = Fields[0];
             Grid2.ItemsSource = Fields[1];
             Grid3.ItemsSource = Fields[2];
-            Grid4.ItemsSource = Fields[3];
+            Grid4.ItemsSource = Fields[5];
             Grid5.ItemsSource = Fields[4];
-            Grid6.ItemsSource = Fields[5];
+            Grid6.ItemsSource = Fields[3];
             Grid7.ItemsSource = Fields[6];
             Grid8.ItemsSource = Fields[7];
             Grid9.ItemsSource = Fields[8];
@@ -202,7 +256,7 @@ namespace Pluto.Pages
 
                 current.Is_Select = !current.Is_Select;
 
-                if (Fields[current_Field.Grid_Number - 1].Where(x => x == current_Field).FirstOrDefault() != null)
+                if (Fields[current_Field.Real_Grid_Number - 1].Where(x => x == current_Field).FirstOrDefault() != null)
                 {
                     int showednumber = 0;
                     if (current.Is_Select == true)
@@ -210,7 +264,7 @@ namespace Pluto.Pages
                         showednumber = int.Parse(current.Visible_Number);
                     }
 
-                    Fields[current_Field.Grid_Number - 1].Where(x => x == current_Field).First().Number = showednumber;
+                    Fields[current_Field.Real_Grid_Number - 1].Where(x => x == current_Field).First().Number = showednumber;
                 }
 
                 foreach (Number n in Numbers)
@@ -393,10 +447,11 @@ namespace Pluto.Pages
                         f.Number = 0;
                         f.Skips = 0;
                         f.Is_Saturated = false;
-                        f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
-                        f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
+                        //f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
+                        //f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                         f.Is_Clearly = false;
                         f.Is_Semi_Clearly = false;
+                        f.Possebilities.Clear();
                     }
                 }
 
@@ -414,8 +469,10 @@ namespace Pluto.Pages
                 field_position_marker =  0 ;
                 field_stop_position = 1;
                 skip_stop_position = 0;
-                Possebilities_Log = new List<Possebilitie>();
+                Possebilities_Log.Clear();
+                Denails.Clear();
                 Attampts_Label = 0;
+                started = false;
 
                 number_collectionview.IsVisible = false;
                 Spielfeldoptionen.IsVisible = false;
@@ -507,8 +564,8 @@ namespace Pluto.Pages
                             f.Number = 0;
                             f.Skips = 0;
                             f.Is_Saturated = false;
-                            f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
-                            f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
+                            //f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
+                            //f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                             f.Is_Clearly = false;
                             f.Is_Semi_Clearly = false;
                         }
@@ -520,6 +577,7 @@ namespace Pluto.Pages
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
+                started = false;
 
                 if (numberGrid == true)
                 {
@@ -557,9 +615,10 @@ namespace Pluto.Pages
                             f.Skips = 0;
                             f.Is_Saturated = false;
                             f.Number = 0;
-                            f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
-                            f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
+                            //f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
+                            //f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                             f.Is_Clearly = false;
+                            f.Possebilities.Clear();
                             f.Is_Semi_Clearly = false;
                         }
                     }
@@ -583,6 +642,7 @@ namespace Pluto.Pages
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
+                started = false;
             }
         }
 
@@ -638,6 +698,7 @@ namespace Pluto.Pages
                     skip_stop_position = 0;
                     Possebilities_Log = new List<Possebilitie>();
                     Attampts_Label = 0;
+                    started = false;
 
                     Timer_Label = string.Empty;
                 }
@@ -779,6 +840,7 @@ namespace Pluto.Pages
                             Id = f.Id,
                             Number = f.Number,
                             Grid_Number = f.Grid_Number,
+                            Real_Grid_Number = f.Real_Grid_Number,
                             Row_Number = f.Row_Number,
                             Column_Number = f.Column_Number,
                             Is_Fault = f.Is_Fault,
@@ -908,8 +970,10 @@ namespace Pluto.Pages
                 field_position_marker = 0;
                 field_stop_position = 1;
                 skip_stop_position = 0;
-                Possebilities_Log = new List<Possebilitie>();
+                Possebilities_Log.Clear();
+                Denails.Clear();
                 Attampts_Label = 0;
+                started = false;
 
                 Difficulty = (playgroundlist.SelectedItem as Playground).Difficulty;
                 Status_Solver = "Undefiniert";
@@ -1013,8 +1077,8 @@ namespace Pluto.Pages
                                 f.Is_Fault = false;
                                 f.Skips = 0;
                                 f.Is_Saturated = false;
-                                f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
-                                f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
+                                //f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
+                                //f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                                 f.Is_Clearly = false;
                                 f.Is_Semi_Clearly = false;
                                 follower++;
@@ -1052,8 +1116,10 @@ namespace Pluto.Pages
 
         public static List<Possebilitie> Possebilities_Log = new List<Possebilitie>();
 
+        public static List<Denail> Denails = new List<Denail>();
 
-        public List<Field> Placholder_Fields = new List<Field>();
+
+        public static List<Field> Placholder_Fields = new List<Field>();
 
         Field current_Field = new Field();
         Field previous_Field = new Field();
@@ -1067,6 +1133,7 @@ namespace Pluto.Pages
         public static int block_stop_position = 0;
         public static int skip_stop_position = 0;
         public static string dificulty_marker = string.Empty;
+        public static bool started = false; 
 
 
         public bool create_button_IsEnabled = false;

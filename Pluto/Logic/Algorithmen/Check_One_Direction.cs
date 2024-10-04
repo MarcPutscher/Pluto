@@ -452,8 +452,8 @@ namespace Pluto.Logic.Algorithmen
                                     }
                                 }
 
-                                //Fügt die Plazhalter zu den Feldern in der disjunkten Menge hinzu
-                                MainPage.Possebilities_Log.Last().Create_Placeholder_Number_In_Fields();
+                                ////Fügt die Plazhalter zu den Feldern in der disjunkten Menge hinzu
+                                //MainPage.Possebilities_Log.Last().Create_Placeholder_Number_In_Fields();
                             }
 
                             //Erstellt die Möglichkeit die für diesen Zug zuständig ist

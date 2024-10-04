@@ -54,7 +54,7 @@
                             <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="models:Field">
                                 <StackLayout>
                                     <StackLayout.HeightRequest>
                                         <OnPlatform x:TypeArguments="x:Double">
@@ -68,7 +68,7 @@
                                             <On Platform="WinUI" Value="50"/>
                                         </OnPlatform>
                                     </StackLayout.WidthRequest>
-                                    <cells:Field_View/>
+                                    <cells:Field_View BindingContext="{Binding .}"/>
                                     <StackLayout.GestureRecognizers>
                                         <TapGestureRecognizer Tapped="Field_Tapped" Buttons="Primary"/>
                                     </StackLayout.GestureRecognizers>
@@ -497,6 +497,7 @@
                             <x:Array Type="{x:Type x:String}">
                                 <x:String>Brute-Force</x:String>
                                 <x:String>Brute-Force Advanced</x:String>
+                                <x:String>Brute-Force Next Gen</x:String>
                                 <x:String>Check one direction</x:String>
                             </x:Array>
                         </CollectionView.ItemsSource>
