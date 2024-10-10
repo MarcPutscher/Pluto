@@ -926,11 +926,30 @@
                         </Border>
                     </StackLayout>
                 </StackLayout>
-                <Label Text="Logbuch:" TextColor="DarkRed" FontSize="Medium" VerticalOptions="Center" HorizontalOptions="Center"/>
-                <CollectionView x:Name="loglist" VerticalScrollBarVisibility="Never"  VerticalOptions="StartAndExpand" HorizontalOptions="Center" WidthRequest="500">
+                <Label Text="Logbuch:" TextColor="DarkRed" FontSize="Medium" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,0,0,5">
+                    <Label.Scale>
+                        <OnPlatform x:TypeArguments="x:Double">
+                            <On Platform="Android" Value="1.5"/>
+                            <On Platform="WinUI" Value="1"/>
+                        </OnPlatform>
+                    </Label.Scale>
+                </Label>
+                <CollectionView x:Name="loglist" VerticalScrollBarVisibility="Never"  VerticalOptions="StartAndExpand" HorizontalOptions="Center" >
+                    <CollectionView.WidthRequest>
+                        <OnPlatform x:TypeArguments="x:Double">
+                            <On Platform="Android" Value="400"/>
+                            <On Platform="WinUI" Value="500"/>
+                        </OnPlatform>
+                    </CollectionView.WidthRequest>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Logdata">
-                            <StackLayout Orientation="Horizontal" Scale="0.9" HorizontalOptions="Center">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                                <StackLayout.Scale>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="1.1"/>
+                                        <On Platform="WinUI" Value="0.9"/>
+                                    </OnPlatform>
+                                </StackLayout.Scale>
                                 <StackLayout.Triggers>
                                     <DataTrigger TargetType="StackLayout" Binding="{Binding Text}" Value="">
                                         <Setter Property="IsVisible" Value="False"/>
@@ -942,7 +961,14 @@
                                         <Setter Property="BackgroundColor" Value="Transparent"/>
                                     </DataTrigger>
                                 </StackLayout.Triggers>
-                                <Label Text="{Binding Text}"/>
+                                <Label Text="{Binding Text}">
+                                    <Label.TextColor>
+                                        <OnPlatform x:TypeArguments="Color">
+                                            <On Platform="Android" Value="White"/>
+                                            <On Platform="WinUI" Value="White"/>
+                                        </OnPlatform>
+                                    </Label.TextColor>
+                                </Label>
                                 <!--<Label Text="Block"/>
                                 <Label Text="{Binding Grid}" TextColor="Yellow"/>
                                 <Label Text=" Reihe "/>
