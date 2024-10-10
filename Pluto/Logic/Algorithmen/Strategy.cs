@@ -1,7 +1,10 @@
-﻿using Microsoft.Maui.Controls.PlatformConfiguration;
+﻿using CommunityToolkit.Maui.Core.Extensions;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using MvvmHelpers;
 using Pluto.Models;
 using Pluto.Pages;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -37,9 +40,21 @@ namespace Pluto.Logic.Algorithmen
             {
                 is_saturadet = true;
 
+                //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
+                }
+
                 //Geht alle Blöcke durch
                 for (int p = 0; p < 9; p++)
                 {
+                    //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
                     //Wenn der Block schon komplett ausgefüllt ist überspringe
                     if (!MainPage.Fields[p].Any(x => x.Number == 0))
                         continue;
@@ -47,13 +62,19 @@ namespace Pluto.Logic.Algorithmen
                     //Geht die Felder in dem Block durch, die keine Zahl eingetragen haben und die nur eine Möglichkeit besitzten
                     foreach (Field f in MainPage.Fields[p].Where(x=>x.Number == 0 && x.Possebilities.Count == 1).ToList())
                     {
-                        //Wenn in der Spalte auch diese Möglichkeit existiert dann überspringe
-                        if (all_fields.Any(x => x.Column_Number == f.Column_Number && x.Possebilities.Contains(f.Possebilities.First()) == true && x != f))
-                            continue;
+                        //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                        if (token.IsCancellationRequested)
+                        {
+                            token.ThrowIfCancellationRequested();
+                        }
 
-                        //Wenn in der Reihe auch diese Möglichkeit existiert dann überspringe
-                        if (all_fields.Any(x => x.Row_Number == f.Row_Number && x.Possebilities.Contains(f.Possebilities.First()) == true && x != f))
-                            continue;
+                        ////Wenn in der Spalte auch diese Möglichkeit existiert dann überspringe
+                        //if (all_fields.Where(x=>x.Number == 0).Any(x => x.Column_Number == f.Column_Number && x.Possebilities.Contains(f.Possebilities.First()) == true && x != f))
+                        //    continue;
+
+                        ////Wenn in der Reihe auch diese Möglichkeit existiert dann überspringe
+                        //if (all_fields.Where(x => x.Number == 0).Any(x => x.Row_Number == f.Row_Number && x.Possebilities.Contains(f.Possebilities.First()) == true && x != f))
+                        //    continue;
 
                         // Platzhalter Feld für das ausgewählte Feld
                         Field Placeholder = new Field() { Id = f.Id, Column_Number = f.Column_Number, Number = f.Possebilities.First(), Row_Number = f.Row_Number, Grid_Number = f.Grid_Number, Is_Fault = f.Is_Fault, Is_Select = f.Is_Select, Number_Background_Color = f.Number_Background_Color, Number_Color = f.Number_Color, Visible_Number = f.Visible_Number, Is_Locked = f.Is_Locked };
@@ -80,16 +101,46 @@ namespace Pluto.Logic.Algorithmen
 
                             //leere die Möglichkeitsliste und Verweigerungsliste
                             f.Possebilities.Clear();
-                            //f.Denails.Clear();
 
-                            //löscht alle gleichen Zahlen die in der Reihe, Spalte und Block als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Grid_Number == f.Grid_Number || x.Column_Number == f.Column_Number || x.Row_Number == f.Row_Number).ToList())
-                            {
-                                field.Possebilities.Remove(f.Number);
-                            }
+                            //Logbucheintrag
+                            MainPage.Logs.Insert(0, new Logdata() { ID = f.Id, Grid = f.Grid_Number, Row = f.Row_Number, Column = f.Column_Number }.Place_Number_In_Field(f.Number, all_fields, Logdata.Strategies.Naked_Single));
 
                             //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                             await Waiter.Waiting();
+
+                            //löscht alle gleichen Zahlen die in dem Block als Möglichkeit stehen
+                            foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Grid_Number == f.Grid_Number).ToList())
+                            {
+                                if(field.Possebilities.Remove(f.Number) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(f.Number, all_fields, Logdata.Strategies.Naked_Single));                            
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
+                                }
+                            }
+                            //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen
+                            foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Row_Number == f.Row_Number).ToList())
+                            {
+                                if (field.Possebilities.Remove(f.Number) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(f.Number, all_fields, Logdata.Strategies.Naked_Single));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
+                                }
+                            }
+                            //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen
+                            foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Column_Number == f.Column_Number).ToList())
+                            {
+                                if (field.Possebilities.Remove(f.Number) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(f.Number, all_fields, Logdata.Strategies.Naked_Single));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
+                                }
+                            }
 
                             is_saturadet = false;
                         }
@@ -110,9 +161,21 @@ namespace Pluto.Logic.Algorithmen
             {
                 is_saturadet = true;
 
+                //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
+                }
+
                 //Geht alle Blöcke durch
                 for (int p = 0; p < 9; p++)
                 {
+                    //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
                     //Wenn der Block schon komplett ausgefüllt ist überspringe
                     if (!MainPage.Fields[p].Any(x => x.Number == 0))
                         continue;
@@ -120,7 +183,13 @@ namespace Pluto.Logic.Algorithmen
                     //Geht jede Zahl durch
                     for(int z = 1; z<10;z++)
                     {
-                        //Wenn es in dem Block nur ein Feld gibt was diese Zahl als Möglichkeit hat
+                        //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                        if (token.IsCancellationRequested)
+                        {
+                            token.ThrowIfCancellationRequested();
+                        }
+
+                        //Wenn es in dem Block nur ein Feld gibt was diese Zahl als Möglichkeit besitzt
                         if (MainPage.Fields[p].Count(x=>x.Possebilities.Any(y=>y==z) == true) == 1)
                         {
                             //Das Feld was diese Zahl als möglichkeit besitzt
@@ -159,16 +228,46 @@ namespace Pluto.Logic.Algorithmen
 
                                 //leere die Möglichkeitsliste und Verweigerungsliste
                                 f.Possebilities.Clear();
-                                //f.Denails.Clear();
 
-                                //löscht alle gleichen Zahlen die in der Reihe, Spalte und Block als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                                foreach (Field field in all_fields.Where(x=>x.Number != 0).Where(x=>x.Grid_Number == f.Grid_Number || x.Column_Number == f.Column_Number || x.Row_Number == f.Row_Number).ToList())
-                                {
-                                    field.Possebilities.Remove(f.Number);
-                                }
+                                //Logbucheintrag
+                                MainPage.Logs.Insert(0, new Logdata() { ID = f.Id, Grid = f.Grid_Number, Row = f.Row_Number, Column = f.Column_Number }.Place_Number_In_Field(f.Number, all_fields, Logdata.Strategies.Hidden_Single));
 
                                 //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                 await Waiter.Waiting();
+
+                                //löscht alle gleichen Zahlen die in dem Block als Möglichkeit stehen
+                                foreach (Field field in all_fields.Where(x=>x.Number == 0).Where(x=>x.Grid_Number == f.Grid_Number).ToList())
+                                {
+                                    if (field.Possebilities.Remove(f.Number) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(f.Number, all_fields, Logdata.Strategies.Hidden_Single));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+                                    }
+                                }
+                                //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen
+                                foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Row_Number == f.Row_Number).ToList())
+                                {
+                                    if (field.Possebilities.Remove(f.Number) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(f.Number, all_fields, Logdata.Strategies.Hidden_Single));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+                                    }
+                                }
+                                //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen
+                                foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Column_Number == f.Column_Number).ToList())
+                                {
+                                    if (field.Possebilities.Remove(f.Number) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(f.Number, all_fields, Logdata.Strategies.Hidden_Single));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+                                    }
+                                }
 
                                 is_saturadet = false;
                             }
@@ -190,45 +289,64 @@ namespace Pluto.Logic.Algorithmen
             bool is_saturadet = false;
             while (is_saturadet == false)
             {
+                //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
+                }
+
                 is_saturadet = true;
 
                 //Geht jedes Feld was keine Zahl hat durch
-                foreach(Field f in all_fields.Where(x=>x.Number != 0))
+                foreach(Field f in all_fields.Where(x=>x.Number == 0))
                 {
+                    //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    //Wenn die Möglichkeiten dieses Feldes nicht 2 sind dann überspringe
+                    if (f.Possebilities.Count != 2)
+                        continue;
+
                     //Wenn es in dem Block nur zwei Felder gibt die die gleiche Möglichkeitsliste besitzt
-                    if (all_fields.Count(x => x.Possebilities.Equals(f.Possebilities) == true && x.Grid_Number == f.Grid_Number) == 2)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == f.Possebilities.Count && x.Possebilities.Count == 2).Count(x=> x.Grid_Number == f.Grid_Number) == 2)
                     {
                         //Ermittelt die offenen Zwillinge
-                        naked_pair = all_fields.Where(x => x.Possebilities.Equals(f.Possebilities) == true && x.Grid_Number == f.Grid_Number).ToList();
+                        naked_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == f.Possebilities.Count && x.Possebilities.Count == 2).Where(x => x.Grid_Number == f.Grid_Number).ToList();
 
                         //löscht alle gleichen Zahlen die in dem Block als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if(all_fields.Any(x => x.Number != 0 && x.Grid_Number == f.Grid_Number && naked_pair.Contains(x) == false))
+                        foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Grid_Number == f.Grid_Number && naked_pair.Contains(x) == false).Where(x => x.Possebilities.Intersect(f.Possebilities).Any() == true).ToList())
                         {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Grid_Number == f.Grid_Number && naked_pair.Contains(x) == false).ToList())
+                            foreach (int np in naked_pair.First().Possebilities)
                             {
-                                foreach (int np in naked_pair.First().Possebilities)
+                                if (field.Possebilities.Remove(np) == true)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
-                                    is_saturadet = false;
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
                                 }
+
+                                is_saturadet = false;
                             }
                         }
 
                         //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
                         if (naked_pair[0].Row_Number == naked_pair[1].Row_Number)
                         {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Row_Number == f.Row_Number && naked_pair.Contains(x) == false).ToList())
+                            foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Row_Number == f.Row_Number && naked_pair.Contains(x) == false).Where(x => x.Possebilities.Intersect(f.Possebilities).Any() == true).ToList())
                             {
                                 foreach (int np in naked_pair.First().Possebilities)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
+                                    if (field.Possebilities.Remove(np) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+                                    }
 
                                     is_saturadet = false;
                                 }
@@ -238,258 +356,319 @@ namespace Pluto.Logic.Algorithmen
                         //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
                         if (naked_pair[0].Column_Number == naked_pair[1].Column_Number)
                         {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Column_Number == f.Column_Number && naked_pair.Contains(x) == false).ToList())
+                            foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Column_Number == f.Column_Number && naked_pair.Contains(x) == false).Where(x=>x.Possebilities.Intersect(f.Possebilities).Any() == true).ToList())
                             {
                                 foreach (int np in naked_pair.First().Possebilities)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
+                                    if (field.Possebilities.Remove(np) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+                                    }
 
                                     is_saturadet = false;
                                 }
                             }
                         }
-
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
                     }
 
                     //Wenn es in der Reihe nur zwei Felder gibt die die gleiche Möglichkeitsliste besitzt
-                    if (all_fields.Count(x => x.Possebilities.Equals(f.Possebilities) == true && x.Row_Number == f.Row_Number) == 2)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == f.Possebilities.Count && x.Possebilities.Count == 2).Count(x=>x.Row_Number == f.Row_Number) == 2)
                     {
                         //Ermittelt die offenen Zwillinge
-                        naked_pair = all_fields.Where(x => x.Possebilities.Equals(f.Possebilities) == true && x.Row_Number == f.Row_Number).ToList();
+                        naked_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == f.Possebilities.Count && x.Possebilities.Count == 2).Where(x => x.Row_Number == f.Row_Number).ToList();
 
                         //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (naked_pair[0].Row_Number == naked_pair[1].Row_Number)
+                        foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Row_Number == f.Row_Number && naked_pair.Contains(x) == false).Where(x => x.Possebilities.Intersect(f.Possebilities).Any() == true).ToList())
                         {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Row_Number == f.Row_Number && naked_pair.Contains(x) == false).ToList())
+                            foreach (int np in naked_pair.First().Possebilities)
                             {
-                                foreach (int np in naked_pair.First().Possebilities)
+                                if (field.Possebilities.Remove(np) == true)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
-                                    is_saturadet = false;
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
                                 }
+
+                                is_saturadet = false;
                             }
                         }
-
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
                     }
 
                     //Wenn es in der Spalte nur zwei Felder gibt die die gleiche Möglichkeitsliste besitzt
-                    if (all_fields.Count(x => x.Possebilities.Equals(f.Possebilities) == true && x.Column_Number == f.Column_Number) == 2)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == f.Possebilities.Count && x.Possebilities.Count == 2).Count(x=>x.Column_Number == f.Column_Number) == 2)
                     {
                         //Ermittelt die offenen Zwillinge
-                        naked_pair = all_fields.Where(x => x.Possebilities.Equals(f.Possebilities) == true && x.Column_Number == f.Column_Number).ToList();
+                        naked_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == f.Possebilities.Count && x.Possebilities.Count == 2).Where(x => x.Column_Number == f.Column_Number).ToList();
 
                         //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
                         if (naked_pair[0].Column_Number == naked_pair[1].Column_Number)
                         {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Column_Number == f.Column_Number && naked_pair.Contains(x) == false).ToList())
+                            foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Column_Number == f.Column_Number && naked_pair.Contains(x) == false).Where(x => x.Possebilities.Intersect(f.Possebilities).Any() == true).ToList())
                             {
                                 foreach (int np in naked_pair.First().Possebilities)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
+                                    if (field.Possebilities.Remove(np) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+                                    }
 
                                     is_saturadet = false;
                                 }
                             }
                         }
-
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
                     }
+
+                    if (is_saturadet == false)
+                        return;
                 }
             }
         }
 
         /// <summary>
-        /// Prinzip: Wenn nur in zwei Felder eines gemeinschaftlichen Bereiches zwei gleiche Zahlen stehen und sonst im Bereich diese Paar nicht vorkommt, dann werden alle anderen Zahlen in den Felder als Möglichkeit verworfen sowie alle gleiche Zahlen von dem Paar die sich im Einflussbereich befinden
+        /// Prinzip: Wenn nur in zwei Felder eines gemeinschaftlichen Bereiches zwei gleiche Zahlen stehen die sonst im Bereich dieses Paars nichts vorkommt, dann werden alle anderen Zahlen in den Felder als Möglichkeit verworfen
         /// </summary>
         public  async Task Hidden_Pair()
         {
-            //Die verdeckten Zwillinge die die gleiche Möglichkeitsliste besitzten 
+            //Die verdeckten Zwillinge die die zwei gleiche Möglichkeiten in der Möglichkeitsliste besitzten 
             List<Field> hidden_pair = new List<Field>();
 
             //Geht solange die Bereiche durch bis es keine Änderungen mehr gibt
             bool is_saturadet = false;
             while (is_saturadet == false)
             {
+                //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
+                }
+
                 is_saturadet = true;
 
                 //Geht jedes Feld was keine Zahl hat durch
                 foreach (Field f in all_fields.Where(x => x.Number == 0))
                 {
+                    //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
                     //Wenn es in dem Block nur zwei Feld gibt die zwei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Grid_Number == f.Grid_Number) == 2)
+                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 && x.Grid_Number == f.Grid_Number) == 2)
                     {
                         //Ermittelt die verdeckten Zwillinge
-                        hidden_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Grid_Number == f.Grid_Number).ToList();
+                        hidden_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 && x.Grid_Number == f.Grid_Number).ToList();
 
                         //Erstellt eine Liste an Zahlen die zu der Teilmenge gehören
-                        List<int> pairs = new List<int>(hidden_pair[0].Possebilities.Except(hidden_pair[1].Possebilities).Union(hidden_pair[1].Possebilities.Except(hidden_pair[0].Possebilities)).ToList());
+                        List<int> pairs = new List<int>(hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities)).ToList();
 
-                        //löscht all anderen Möglichkeiten in den versteckten Zwillingen die nicht zu der gleichen Teilmenge gehören
-                        foreach (int np in pairs)
+                        //Wenn es in dem Block kein anderes Feld existiert was eine von den Möglichkeiten besitzt die die Zwillinge definieren
+                        if (!all_fields.Where(x => x.Possebilities.Intersect(pairs).Count() >= 1 && x.Grid_Number == f.Grid_Number).Any(x=>hidden_pair.Contains(x) == false))
                         {
-                            hidden_pair[0].Possebilities.Remove(np);
-                            hidden_pair[1].Possebilities.Remove(np);
 
-                            //if (!hidden_pair[0].Denails.Any(x => x == np))
-                            //    hidden_pair[0].Denails.Add(np);
-                            //if (!hidden_pair[1].Denails.Any(x => x == np))
-                            //    hidden_pair[1].Denails.Add(np);
-                        }
+                            //Erstellt eine Liste an Zahlen die nicht zu der Teilmenge gehören
+                            List<int> others = new List<int>(hidden_pair[0].Possebilities.Except(hidden_pair[1].Possebilities).Union(hidden_pair[1].Possebilities.Except(hidden_pair[0].Possebilities)).ToList());
 
-                        //löscht alle gleichen Zahlen die in dem Block als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (all_fields.Any(x => x.Number != 0 && x.Grid_Number == f.Grid_Number && hidden_pair.Contains(x) == false))
-                        {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0 && x.Grid_Number == f.Grid_Number && hidden_pair.Contains(x) == false && hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(x.Possebilities).Any()).ToList())
+                            if (others.Count == 0)
                             {
-                                foreach (int np in hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(field.Possebilities))
+                                foreach (int z in hidden_pair.FirstOrDefault().Possebilities)
                                 {
-                                    field.Possebilities.Remove(np);
+                                    if (all_fields.Where(x => x.Number == 0 && x.Grid_Number == hidden_pair.FirstOrDefault().Grid_Number).Where(x => x.Possebilities.Contains(z) == true && hidden_pair.Contains(x) == false).Any())
+                                    {
+                                        others.Add(z);
+                                    }
+                                }
+                            }
 
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
+                            //löscht all anderen Möglichkeiten in den versteckten Zwillingen die nicht zu der gleichen Teilmenge gehören
+                            foreach (int np in others)
+                            {
+                                if (hidden_pair[0].Possebilities.Remove(np) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[0].Id, Grid = hidden_pair[0].Grid_Number, Row = hidden_pair[0].Row_Number, Column = hidden_pair[0].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
+                                }
+                                if (hidden_pair[1].Possebilities.Remove(np) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[1].Id, Grid = hidden_pair[1].Grid_Number, Row = hidden_pair[1].Row_Number, Column = hidden_pair[1].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
+                                }
+                            }
 
-                                    is_saturadet = false;
+                            //löscht alle gleichen Zahlen die in dem Block als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
+                            if (all_fields.Any(x => x.Number == 0 && x.Grid_Number == f.Grid_Number && hidden_pair.Contains(x) == false))
+                            {
+                                foreach (Field field in all_fields.Where(x => x.Number == 0 && x.Grid_Number == f.Grid_Number && hidden_pair.Contains(x) == false).Where(x => hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(x.Possebilities).Any()).ToList())
+                                {
+                                    foreach (int np in hidden_pair[0].Possebilities)
+                                    {
+                                        if (field.Possebilities.Remove(np) == true)
+                                        {
+                                            //Logbucheintrag
+                                            MainPage.Logs.Add(new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                            //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                            await Waiter.Waiting();
+                                        }
+
+                                        is_saturadet = false;
+                                    }
+                                }
+                            }
+
+                            //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
+                            if (hidden_pair[0].Row_Number == hidden_pair[1].Row_Number)
+                            {
+                                foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Row_Number == f.Row_Number && hidden_pair.Contains(x) == false).Where(x => hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(x.Possebilities).Any()).ToList())
+                                {
+                                    foreach (int np in hidden_pair[0].Possebilities)
+                                    {
+                                        if (field.Possebilities.Remove(np) == true)
+                                        {
+                                            //Logbucheintrag
+                                            MainPage.Logs.Add(new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                            //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                            await Waiter.Waiting();
+                                        }
+
+                                        is_saturadet = false;
+                                    }
+                                }
+                            }
+
+                            //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
+                            if (hidden_pair[0].Column_Number == hidden_pair[1].Column_Number)
+                            {
+                                foreach (Field field in all_fields.Where(x => x.Number == 0).Where(x => x.Column_Number == f.Column_Number && hidden_pair.Contains(x) == false).Where(x => hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(x.Possebilities).Any()).ToList())
+                                {
+                                    foreach (int np in hidden_pair[0].Possebilities)
+                                    {
+                                        if (field.Possebilities.Remove(np) == true)
+                                        {
+                                            //Logbucheintrag
+                                            MainPage.Logs.Add(new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                            //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                            await Waiter.Waiting();
+                                        }
+
+                                        is_saturadet = false;
+                                    }
                                 }
                             }
                         }
-
-                        //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (hidden_pair[0].Row_Number == hidden_pair[1].Row_Number)
-                        {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Row_Number == f.Row_Number && hidden_pair.Contains(x) == false && hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(x.Possebilities).Any()).ToList())
-                            {
-                                foreach (int np in hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(field.Possebilities))
-                                {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
-                                    is_saturadet = false;
-                                }
-                            }
-                        }
-
-                        //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (hidden_pair[0].Column_Number == hidden_pair[1].Column_Number)
-                        {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Column_Number == f.Column_Number && hidden_pair.Contains(x) == false && hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(x.Possebilities).Any()).ToList())
-                            {
-                                foreach (int np in hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(field.Possebilities))
-                                {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
-                                    is_saturadet = false;
-                                }
-                            }
-                        }
-
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
                     }
 
                     //Wenn es in der Reihe nur zwei Feld gibt was die gleiche Möglichkeitsliste besitzt
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Row_Number == f.Row_Number) == 2)
+                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 && x.Row_Number == f.Row_Number) == 2)
                     {
                         //Ermittelt die offenen Zwillinge
-                        hidden_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Row_Number == f.Row_Number).ToList();
+                        hidden_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 && x.Row_Number == f.Row_Number).ToList();
 
                         //Erstellt eine Liste an Zahlen die zu der Teilmenge gehören
-                        List<int> pairs = new List<int>(hidden_pair[0].Possebilities.Except(hidden_pair[1].Possebilities).Union(hidden_pair[1].Possebilities.Except(hidden_pair[0].Possebilities)).ToList());
+                        List<int> pairs = new List<int>(hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities)).ToList();
 
-                        //löscht all anderen Möglichkeiten in den versteckten Zwillingen die nicht zu der gleichen Teilmenge gehören
-                        foreach (int np in pairs)
+                        //Wenn es in der Reihe kein anderes Feld existiert was eine von den Möglichkeiten besitzt die die Zwillinge definieren
+                        if (!all_fields.Where(x => x.Possebilities.Intersect(pairs).Count() >= 1 && x.Row_Number == f.Row_Number).Any(x => hidden_pair.Contains(x) == false))
                         {
-                            hidden_pair[0].Possebilities.Remove(np);
-                            hidden_pair[1].Possebilities.Remove(np);
+                            //Erstellt eine Liste an Zahlen die nicht zu der Teilmenge gehören
+                            List<int> others = new List<int>(hidden_pair[0].Possebilities.Except(hidden_pair[1].Possebilities).Union(hidden_pair[1].Possebilities.Except(hidden_pair[0].Possebilities)).ToList());
 
-                            //if (!hidden_pair[0].Denails.Any(x => x == np))
-                            //    hidden_pair[0].Denails.Add(np);
-                            //if (!hidden_pair[1].Denails.Any(x => x == np))
-                            //    hidden_pair[1].Denails.Add(np);
-                        }
-
-                        //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (hidden_pair[0].Row_Number == hidden_pair[1].Row_Number)
-                        {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Row_Number == f.Row_Number && hidden_pair.Contains(x) == false && hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(x.Possebilities).Any()).ToList())
+                            if (others.Count == 0)
                             {
-                                foreach (int np in hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(field.Possebilities))
+                                foreach (int z in hidden_pair.FirstOrDefault().Possebilities)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
-                                    is_saturadet = false;
+                                    if (all_fields.Where(x => x.Number == 0 && x.Row_Number == hidden_pair.FirstOrDefault().Row_Number).Where(x => x.Possebilities.Contains(z) == true && hidden_pair.Contains(x) == false).Any())
+                                    {
+                                        others.Add(z);
+                                    }
                                 }
                             }
-                        }
 
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
+                            //löscht all anderen Möglichkeiten in den versteckten Zwillingen die nicht zu der gleichen Teilmenge gehören
+                            foreach (int np in others)
+                            {
+                                if (hidden_pair[0].Possebilities.Remove(np) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[0].Id, Grid = hidden_pair[0].Grid_Number, Row = hidden_pair[0].Row_Number, Column = hidden_pair[0].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
+                                }
+                                if (hidden_pair[1].Possebilities.Remove(np) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[1].Id, Grid = hidden_pair[1].Grid_Number, Row = hidden_pair[1].Row_Number, Column = hidden_pair[1].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
+                                }
+
+                                //if (!hidden_pair[0].Denails.Any(x => x == np))
+                                //    hidden_pair[0].Denails.Add(np);
+                                //if (!hidden_pair[1].Denails.Any(x => x == np))
+                                //    hidden_pair[1].Denails.Add(np);
+                            }
+                        }
                     }
 
                     //Wenn es in der Spalte nur zwei Feld gibt was die gleiche Möglichkeitsliste besitzt
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Column_Number == f.Column_Number) == 2)
+                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 && x.Column_Number == f.Column_Number) == 2)
                     {
                         //Ermittelt die offenen Zwillinge
-                        hidden_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Column_Number == f.Column_Number).ToList();
+                        hidden_pair = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 && x.Column_Number == f.Column_Number).ToList();
 
                         //Erstellt eine Liste an Zahlen die zu der Teilmenge gehören
-                        List<int> pairs = new List<int>(hidden_pair[0].Possebilities.Except(hidden_pair[1].Possebilities).Union(hidden_pair[1].Possebilities.Except(hidden_pair[0].Possebilities)).ToList());
+                        List<int> pairs = new List<int>(hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities)).ToList();
 
-                        //löscht all anderen Möglichkeiten in den versteckten Zwillingen die nicht zu der gleichen Teilmenge gehören
-                        foreach (int np in pairs)
+                        //Wenn es in der Reihe kein anderes Feld existiert was eine von den Möglichkeiten besitzt die die Zwillinge definieren
+                        if (!all_fields.Where(x => x.Possebilities.Intersect(pairs).Count() >= 1 && x.Column_Number == f.Column_Number).Any(x => hidden_pair.Contains(x) == false))
                         {
-                            hidden_pair[0].Possebilities.Remove(np);
-                            hidden_pair[1].Possebilities.Remove(np);
+                            //Erstellt eine Liste an Zahlen die nicht zu der Teilmenge gehören
+                            List<int> others = new List<int>(hidden_pair[0].Possebilities.Except(hidden_pair[1].Possebilities).Union(hidden_pair[1].Possebilities.Except(hidden_pair[0].Possebilities)).ToList());
 
-                            //if (!hidden_pair[0].Denails.Any(x => x == np))
-                            //    hidden_pair[0].Denails.Add(np);
-                            //if (!hidden_pair[1].Denails.Any(x => x == np))
-                            //    hidden_pair[1].Denails.Add(np);
-                        }
-
-                        //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (hidden_pair[0].Column_Number == hidden_pair[1].Column_Number)
-                        {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0).Where(x => x.Column_Number == f.Column_Number && hidden_pair.Contains(x) == false && hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(x.Possebilities).Any()).ToList())
+                            if (others.Count == 0)
                             {
-                                foreach (int np in hidden_pair[0].Possebilities.Intersect(hidden_pair[1].Possebilities).Intersect(field.Possebilities))
+                                foreach (int z in hidden_pair.FirstOrDefault().Possebilities)
                                 {
-                                    field.Possebilities.Remove(np);
+                                    if (all_fields.Where(x => x.Number == 0 && x.Column_Number == hidden_pair.FirstOrDefault().Column_Number).Where(x => x.Possebilities.Contains(z) == true && hidden_pair.Contains(x) == false).Any())
+                                    {
+                                        others.Add(z);
+                                    }
+                                }
+                            }
 
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
-                                    is_saturadet = false;
+                            //löscht all anderen Möglichkeiten in den versteckten Zwillingen die nicht zu der gleichen Teilmenge gehören
+                            foreach (int np in others)
+                            {
+                                if (hidden_pair[0].Possebilities.Remove(np) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[0].Id, Grid = hidden_pair[0].Grid_Number, Row = hidden_pair[0].Row_Number, Column = hidden_pair[0].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
+                                }
+                                if (hidden_pair[1].Possebilities.Remove(np) == true)
+                                {
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[1].Id, Grid = hidden_pair[1].Grid_Number, Row = hidden_pair[1].Row_Number, Column = hidden_pair[1].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
                                 }
                             }
                         }
-
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
                     }
+
+                    if(is_saturadet == false)
+                        return;
                 }
             }
         }
@@ -506,20 +685,32 @@ namespace Pluto.Logic.Algorithmen
             bool is_saturadet = false;
             while (is_saturadet == false)
             {
+                //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
+                }
+
                 is_saturadet = true;
 
                 //Geht jedes Feld was keine Zahl hat durch
                 foreach (Field f in all_fields.Where(x => x.Number == 0))
                 {
+                    //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
                     //Wenn die Möglichkeiten dieses Feldes nicht 3 sind dann überspringe
                     if (f.Possebilities.Count != 3)
                         continue;
 
                     //Wenn es in dem Block nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Grid_Number == f.Grid_Number) == 3)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Grid_Number == f.Grid_Number) == 3)
                     {
                         //Ermittelt die offenen Drillinge
-                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Grid_Number == f.Grid_Number).ToList();
+                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Grid_Number == f.Grid_Number).ToList();
 
                         //löscht alle gleichen Zahlen die in dem Block als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
                         if (all_fields.Any(x => x.Number != 0 && x.Grid_Number == f.Grid_Number && naked_trible.Contains(x) == false))
@@ -577,10 +768,10 @@ namespace Pluto.Logic.Algorithmen
                     }
 
                     //Wenn es in der Reihe nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Row_Number == f.Row_Number) == 3)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Row_Number == f.Row_Number) == 3)
                     {
                         //Ermittelt die offenen Drillinge
-                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Row_Number == f.Row_Number).ToList();
+                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Row_Number == f.Row_Number).ToList();
 
                         //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
                         if (naked_trible[0].Row_Number == naked_trible[1].Row_Number && naked_trible[1].Row_Number == naked_trible[2].Row_Number)
@@ -604,10 +795,10 @@ namespace Pluto.Logic.Algorithmen
                     }
 
                     //Wenn es in der Spalte nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeitsliste besitzt
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Column_Number == f.Column_Number) == 3)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Column_Number == f.Column_Number) == 3)
                     {
                         //Ermittelt die offenen Drillinge
-                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Column_Number == f.Column_Number).ToList();
+                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Column_Number == f.Column_Number).ToList();
 
                         //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
                         if (naked_trible[0].Column_Number == naked_trible[1].Column_Number && naked_trible[1].Column_Number == naked_trible[2].Column_Number)
@@ -629,6 +820,9 @@ namespace Pluto.Logic.Algorithmen
                         //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                         await Waiter.Waiting();
                     }
+
+                    if (is_saturadet == false)
+                        return;
                 }
             }
         }
@@ -645,20 +839,32 @@ namespace Pluto.Logic.Algorithmen
             bool is_saturadet = false;
             while (is_saturadet == false)
             {
+                //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
+                }
+
                 is_saturadet = true;
 
                 //Geht jedes Feld was keine Zahl hat durch
                 foreach (Field f in all_fields.Where(x => x.Number == 0))
                 {
+                    //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
                     //Wenn die Möglichkeiten dieses Feldes kleiner 3 sind dann überspringe
-                    if (f.Possebilities.Count >= 3)
+                    if (f.Possebilities.Count < 3)
                         continue;
 
                     //Wenn es in dem Block nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Grid_Number == f.Grid_Number) == 3)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x=> x.Grid_Number == f.Grid_Number) == 3)
                     {
                         //Ermittelt die verdeckten Drillinge
-                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Grid_Number == f.Grid_Number).ToList();
+                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x=>x.Grid_Number == f.Grid_Number).ToList();
 
                         //Eine Liste an Möglichkeiten die zu den verdeckten Drillingen gehören 
                         List<int> trible_numbers = new List<int>(f.Possebilities);
@@ -690,10 +896,10 @@ namespace Pluto.Logic.Algorithmen
                     }
 
                     //Wenn es in der Reihe nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Row_Number == f.Row_Number) == 3)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Row_Number == f.Row_Number) == 3)
                     {
                         //Ermittelt die verdeckten Drillinge
-                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Row_Number == f.Row_Number).ToList();
+                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Row_Number == f.Row_Number).ToList();
 
                         //Eine Liste an Möglichkeiten die zu den verdeckten Drillingen gehören 
                         List<int> trible_numbers = new List<int> (f.Possebilities);
@@ -725,10 +931,10 @@ namespace Pluto.Logic.Algorithmen
                     }
 
                     //Wenn es in der Spalte nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeitsliste besitzt
-                    if (all_fields.Count(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Column_Number == f.Column_Number) == 3)
+                    if(all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Column_Number == f.Column_Number) == 3)
                     {
                         //Ermittelt die verdeckten Drillinge
-                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Column_Number == f.Column_Number).ToList();
+                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Column_Number == f.Column_Number).ToList();
 
                         //Eine Liste an Möglichkeiten die zu den verdeckten Drillingen gehören 
                         List<int> trible_numbers = new List<int>(f.Possebilities);
@@ -758,6 +964,9 @@ namespace Pluto.Logic.Algorithmen
                         //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                         await Waiter.Waiting();
                     }
+
+                    if (is_saturadet == false)
+                        return;
                 }
             }
         }
@@ -771,14 +980,32 @@ namespace Pluto.Logic.Algorithmen
             bool is_saturadet = false;
             while (is_saturadet == false)
             {
+                //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
+                }
+
                 is_saturadet = true;
 
                 //Geht jeden Block durch wo noch nicht alles gefüllt ist
                 foreach (ObservableCollection<Field> lf in MainPage.Fields.Where(x=> x.Any(y => y.Number == 0)))
                 {
-                    //Geht jede Zahl von den Möglichkeiten durch
-                    for(int i = 1; i<10;i++)
+                    //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                    if (token.IsCancellationRequested)
                     {
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    //Geht jede Zahl von den Möglichkeiten durch
+                    for (int i = 1; i<10;i++)
+                    {
+                        //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                        if (token.IsCancellationRequested)
+                        {
+                            token.ThrowIfCancellationRequested();
+                        }
+
                         //Die Felder wo die Möglichkeiten gelöscht werden sollen
                         List<Field> targets = new List<Field>();
 
@@ -850,14 +1077,32 @@ namespace Pluto.Logic.Algorithmen
             bool is_saturadet = false;
             while (is_saturadet == false)
             {
+                //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
+                }
+
                 is_saturadet = true;
 
                 //Geht jeden Block durch wo noch nicht alles gefüllt ist
                 foreach (ObservableCollection<Field> lf in MainPage.Fields.Where(x => x.Any(y => y.Number == 0)))
                 {
+                    //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
                     //Geht jede Zahl von den Möglichkeiten durch
                     for (int i = 1; i < 10; i++)
                     {
+                        //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
+                        if (token.IsCancellationRequested)
+                        {
+                            token.ThrowIfCancellationRequested();
+                        }
+
                         //Die Felder wo die Möglichkeiten besteht und in der selben Reihe sind 
                         List<List<Field>> rows = new List<List<Field>>();
 

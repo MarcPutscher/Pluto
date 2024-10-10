@@ -33,7 +33,7 @@
         </ImageButton>
         
         <Grid HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" BackgroundColor="#100E29" Padding="0" Margin="30,50,30,0" Grid.Row="0">
-            <Border StrokeShape="RoundRectangle 5,5,5,5" HorizontalOptions="Center" Stroke="#100E29" StrokeThickness="10">
+            <Border StrokeShape="RoundRectangle 5,5,5,5" HorizontalOptions="Center" Stroke="#100E29" StrokeThickness="10" IsVisible="{Binding Logs_IsEnabled, Converter={toolkit:InvertedBoolConverter}}">
                 <Grid RowDefinitions="*,8,*,8,*" ColumnDefinitions="*,8,*,8,*" RowSpacing="0" ColumnSpacing="0" Padding="0">
                     <Grid.HeightRequest>
                         <OnPlatform x:TypeArguments="x:Double">
@@ -322,10 +322,273 @@
                     </CollectionView>
                 </Grid>
             </Border>
+            <Border StrokeShape="RoundRectangle 5,5,5,5" HorizontalOptions="Center" Stroke="#100E29" StrokeThickness="10" IsVisible="{Binding Logs_IsEnabled}">
+                <Grid RowDefinitions="*,8,*,8,*" ColumnDefinitions="*,8,*,8,*" RowSpacing="0" ColumnSpacing="0" Padding="0">
+                    <Grid.HeightRequest>
+                        <OnPlatform x:TypeArguments="x:Double">
+                            <On Platform="Android" Value="391"/>
+                            <On Platform="WinUI" Value="484"/>
+                        </OnPlatform>
+                    </Grid.HeightRequest>
+                    <Grid.WidthRequest>
+                        <OnPlatform x:TypeArguments="x:Double">
+                            <On Platform="Android" Value="391"/>
+                            <On Platform="WinUI" Value="484"/>
+                        </OnPlatform>
+                    </Grid.WidthRequest>
+
+                    <!--Grid1-->
+                    <CollectionView x:Name="LogGrid1" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="0" Grid.Column="0" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Field">
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View BindingContext="{Binding .}"/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--VSeperator1-->
+                    <Rectangle Grid.Row="0" Grid.Column="1"  Grid.RowSpan="5" HorizontalOptions="Fill" Fill="#413ABA" />
+
+                    <!--Grid2-->
+                    <CollectionView x:Name="LogGrid2" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="0" Grid.Column="2" Margin="0" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--VSeperator2-->
+                    <Rectangle Grid.Row="0" Grid.Column="3"  Grid.RowSpan="5" Fill="#413ABA" HorizontalOptions="Fill" />
+
+                    <!--Grid3-->
+                    <CollectionView x:Name="LogGrid3" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="0" Grid.Column="4" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--HSeperator1-->
+                    <Rectangle Grid.Row="1" Grid.Column="0"  Grid.ColumnSpan="5" Fill="#413ABA" HorizontalOptions="Fill" />
+
+                    <!--Grid4-->
+                    <CollectionView x:Name="LogGrid4" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="2" Grid.Column="0" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--Grid5-->
+                    <CollectionView x:Name="LogGrid5" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="2" Grid.Column="2" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--Grid6-->
+                    <CollectionView x:Name="LogGrid6" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="2" Grid.Column="4" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--HSeperator2-->
+                    <Rectangle Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="5" Fill="#413ABA" HorizontalOptions="Fill" />
+
+                    <!--Grid7-->
+                    <CollectionView x:Name="LogGrid7" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="4" Grid.Column="0" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--Grid8-->
+                    <CollectionView x:Name="LogGrid8" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="4" Grid.Column="2" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--Grid9-->
+                    <CollectionView x:Name="LogGrid9" ItemSizingStrategy="MeasureAllItems" FlowDirection="LeftToRight" HorizontalOptions="StartAndExpand" VerticalOptions="StartAndExpand" BackgroundColor="#03012D" SelectionMode="Single" Grid.Row="4" Grid.Column="4" >
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="3" VerticalItemSpacing="1" HorizontalItemSpacing="1"  />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <StackLayout.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.HeightRequest>
+                                    <StackLayout.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="40"/>
+                                            <On Platform="WinUI" Value="50"/>
+                                        </OnPlatform>
+                                    </StackLayout.WidthRequest>
+                                    <cells:Field_View/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </Border>
         </Grid>
         
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*" RowDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
-            <StackLayout Orientation="Vertical" Grid.ColumnSpan="3" x:Name="Spielfeldoptionen" Spacing="0" Opacity="0" Margin="0,-20,0,0" HorizontalOptions="CenterAndExpand" IsVisible="False">
+            <StackLayout Orientation="Vertical" Grid.ColumnSpan="3" x:Name="Spielfeldoptionen" Spacing="0" Opacity="0" Margin="0,-20,0,50" HorizontalOptions="CenterAndExpand" IsVisible="False">
+                <StackLayout Spacing="0" Padding="0" IsVisible="{Binding Logs_IsEnabled, Converter={toolkit:InvertedBoolConverter}}">
                 <StackLayout Orientation="Horizontal">
                     <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Create_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,20,0" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
                         <Label Text="Spielfeld erstellen" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
@@ -580,53 +843,119 @@
                         </Label.FontSize>
                     </Label>
                 </StackLayout>
+                </StackLayout>
 
-                <!--<Label Text="Logbuch:" TextColor="DarkRed" FontSize="Medium" VerticalOptions="Center" HorizontalOptions="Center"/>
-                <CollectionView x:Name="loglist" VerticalScrollBarVisibility="Never" VerticalOptions="Start" HorizontalOptions="Center">
+                <StackLayout Spacing="10" Padding="0" Orientation="Horizontal" HorizontalOptions="Center" IsVisible="{Binding Logs_IsEnabled}">
+                    <StackLayout Orientation="Horizontal">
+                        <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Next_Move_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,20,0" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
+                            <Label Text="Nächster Zug" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="15"/>
+                                        <On Platform="WinUI" Value="15"/>
+                                    </OnPlatform>
+                                </Label.FontSize>
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Next_Move_Button_IsEnabled}" Value="False">
+                                        <Setter Property="TextColor">
+                                            <OnPlatform x:TypeArguments="Color">
+                                                <On Platform="Android" Value="Black"/>
+                                                <On Platform="WinUI" Value="White"/>
+                                            </OnPlatform>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Next_Move_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Padding>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="Android" Value="10,5,10,5"/>
+                                    <On Platform="WinUI" Value="15,5,15,5"/>
+                                </OnPlatform>
+                            </Border.Padding>
+                        </Border>
+                        <Border BackgroundColor="#381452" VerticalOptions="Start" StrokeShape="RoundRectangle 0,0,0,0" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
+                            <Label Text="Logbuch schließen" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="15"/>
+                                        <On Platform="WinUI" Value="15"/>
+                                    </OnPlatform>
+                                </Label.FontSize>
+                            </Label>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Close_Logs_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Padding>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="Android" Value="10,5,10,5"/>
+                                    <On Platform="WinUI" Value="15,5,15,5"/>
+                                </OnPlatform>
+                            </Border.Padding>
+                        </Border>
+                        <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Last_Move_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,0,20" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
+                            <Label Text="Vorherige Zug" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="15"/>
+                                        <On Platform="WinUI" Value="15"/>
+                                    </OnPlatform>
+                                </Label.FontSize>
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Last_Move_Button_IsEnabled}" Value="False">
+                                        <Setter Property="TextColor">
+                                            <OnPlatform x:TypeArguments="Color">
+                                                <On Platform="Android" Value="Black"/>
+                                                <On Platform="WinUI" Value="White"/>
+                                            </OnPlatform>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Last_Move_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Padding>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="Android" Value="10,5,10,5"/>
+                                    <On Platform="WinUI" Value="15,5,15,5"/>
+                                </OnPlatform>
+                            </Border.Padding>
+                        </Border>
+                    </StackLayout>
+                </StackLayout>
+                <Label Text="Logbuch:" TextColor="DarkRed" FontSize="Medium" VerticalOptions="Center" HorizontalOptions="Center"/>
+                <CollectionView x:Name="loglist" VerticalScrollBarVisibility="Never"  VerticalOptions="StartAndExpand" HorizontalOptions="Center" WidthRequest="500">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Logdata">
-                            <StackLayout>
-                                <StackLayout Orientation="Horizontal">
-                                    <StackLayout.Triggers>
-                                        <DataTrigger TargetType="StackLayout" Binding="{Binding Grid_Attempt}" Value="0">
-                                            <Setter Property="IsVisible" Value="False"/>
-                                        </DataTrigger>
-                                    </StackLayout.Triggers>
-                                    <Label Text="{Binding Field_Attempt}"/>
-                                    <Label Text=" Versuche im ">
-                                        <Label.Triggers>
-                                            <DataTrigger TargetType="Label" Binding="{Binding Field_Attempt}" Value="1">
-                                                <Setter Property="Text" Value="Versuch im"/>
-                                            </DataTrigger>
-                                        </Label.Triggers>
-                                    </Label>
-                                    <Label Text="{Binding Recorded_Field.Id}"/>
-                                    <Label Text=" Feld | Reihe "/>
-                                    <Label Text="{Binding Recorded_Field.Row_Number}"/>
-                                    <Label Text=" Spalte"/>
-                                    <Label Text="{Binding Recorded_Field.Column_Number}"/>
-                                </StackLayout>
-                                <StackLayout Orientation="Horizontal">
-                                    <StackLayout.Triggers>
-                                        <DataTrigger TargetType="StackLayout" Binding="{Binding Field_Attempt}" Value="0">
-                                            <Setter Property="IsVisible" Value="False"/>
-                                        </DataTrigger>
-                                    </StackLayout.Triggers>
-                                    <Label Text="{Binding Grid_Attempt}"/>
-                                    <Label Text=" Versuche im ">
-                                        <Label.Triggers>
-                                            <DataTrigger TargetType="Label" Binding="{Binding Grid_Attempt}" Value="1">
-                                                <Setter Property="Text" Value="Versuch im"/>
-                                            </DataTrigger>
-                                        </Label.Triggers>
-                                    </Label>
-                                    <Label Text="{Binding Grid_Number}"/>
-                                    <Label Text=" Block"/>
-                                </StackLayout>
+                            <StackLayout Orientation="Horizontal" Scale="0.9" HorizontalOptions="Center">
+                                <StackLayout.Triggers>
+                                    <DataTrigger TargetType="StackLayout" Binding="{Binding Text}" Value="">
+                                        <Setter Property="IsVisible" Value="False"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="StackLayout" Binding="{Binding Is_Select}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="#94520E"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="StackLayout" Binding="{Binding Is_Select}" Value="False">
+                                        <Setter Property="BackgroundColor" Value="Transparent"/>
+                                    </DataTrigger>
+                                </StackLayout.Triggers>
+                                <Label Text="{Binding Text}"/>
+                                <!--<Label Text="Block"/>
+                                <Label Text="{Binding Grid}" TextColor="Yellow"/>
+                                <Label Text=" Reihe "/>
+                                <Label Text="{Binding Row}" TextColor="Yellow"/>
+                                <Label Text=" Spalte "/>
+                                <Label Text="{Binding Column}" TextColor="Yellow"/>-->
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="Logdata_Tapped" Buttons="Primary"/>
+                                </StackLayout.GestureRecognizers>          
                             </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
-                </CollectionView>-->
+                </CollectionView>
             </StackLayout>
 
             <CollectionView x:Name="number_collectionview" VerticalOptions="EndAndExpand" Margin="0,0,0,0" Opacity="0" BackgroundColor="Transparent" HorizontalOptions="Center" SelectionMode="Single" IsVisible="False" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">

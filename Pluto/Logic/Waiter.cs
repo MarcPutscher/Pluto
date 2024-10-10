@@ -34,7 +34,7 @@ namespace Pluto.Logic
             }
             if (MainPage.dificulty_marker == "Extrem")
             {
-                await Task.Delay(20);
+                await Task.Delay(10);
             }
         }
     }

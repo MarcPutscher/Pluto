@@ -11,6 +11,7 @@ using Pluto.Logic;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Pluto.Service;
 using System.Diagnostics;
+using System.Collections;
 
 namespace Pluto.Pages
 {
@@ -125,8 +126,18 @@ namespace Pluto.Pages
                 }
 
                 Fields.Add(list.ToObservableCollection());
-            }
 
+                List<Field>clone = new List<Field>();
+                //Klont alle Felder in dem Block
+                foreach (var item in (IEnumerable)list)
+                {
+                    Field cloneable = item as Field;
+
+                    clone.Add(cloneable.Clone() as Field);
+                }
+
+                LogFields.Add(clone.ToObservableCollection());
+            }
 
             Grid1.ItemsSource = Fields[0];
             Grid2.ItemsSource = Fields[1];
@@ -138,6 +149,16 @@ namespace Pluto.Pages
             Grid8.ItemsSource = Fields[7];
             Grid9.ItemsSource = Fields[8];
 
+            LogGrid1.ItemsSource = LogFields[0];
+            LogGrid2.ItemsSource = LogFields[1];
+            LogGrid3.ItemsSource = LogFields[2];
+            LogGrid4.ItemsSource = LogFields[5];
+            LogGrid5.ItemsSource = LogFields[4];
+            LogGrid6.ItemsSource = LogFields[3];
+            LogGrid7.ItemsSource = LogFields[6];
+            LogGrid8.ItemsSource = LogFields[7];
+            LogGrid9.ItemsSource = LogFields[8];
+
             for (int i = 1; i < 10; i++)
             {
                 Numbers.Add(new Number() { Visible_Number = i.ToString() });
@@ -145,6 +166,7 @@ namespace Pluto.Pages
 
             number_collectionview.ItemsSource = Numbers;
 
+            loglist.ItemsSource = Logs;
         }
 
         public async void Field_Tapped(object sender, TappedEventArgs e)
@@ -472,6 +494,8 @@ namespace Pluto.Pages
                 Possebilities_Log.Clear();
                 Denails.Clear();
                 Attampts_Label = 0;
+                Logs.Clear();
+                curren_Logdata = null;
                 started = false;
 
                 number_collectionview.IsVisible = false;
@@ -577,6 +601,8 @@ namespace Pluto.Pages
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
+                Logs.Clear();
+                curren_Logdata = null;
                 started = false;
 
                 if (numberGrid == true)
@@ -642,26 +668,167 @@ namespace Pluto.Pages
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
+                Logs.Clear();
+                curren_Logdata = null;
                 started = false;
             }
         }
 
 
-        public void Logs_Proberty_Cahnged(Logdata logdata)
+        public void Logdata_Tapped(object sender, TappedEventArgs e)
         {
-            if(Logs.Any(x=>x.Recorded_Field.Id== logdata.Recorded_Field.Id) == true || Logs.Any(y=>y.Grid_Number == logdata.Grid_Number))
-            {
+            Status_Solver = "Abgebrochen";
 
+            Logdata? current = (sender as StackLayout)?.BindingContext as Logdata;
+            if (current == null)
+                return;
+
+            if (curren_Logdata == null)
+            {
+                curren_Logdata = current;
+
+                Logs_IsEnabled = true;
+
+                if (Logs.Count == 1)
+                {
+                    Next_Move_Button_IsEnabled = false;
+                    Last_Move_Button_IsEnabled = false;
+                }
+                else
+                {
+                    Next_Move_Button_IsEnabled = true;
+                    Last_Move_Button_IsEnabled = true;
+                }
             }
             else
             {
-
+                if (curren_Logdata != current)
+                {
+                    last_Logdata = curren_Logdata;
+                }
+                curren_Logdata = current;
             }
 
-            //loglist.ItemsSource = Logs;
+            current.Is_Select = true;
+
+            if (last_Logdata != null)
+            {
+                last_Logdata.Is_Select = false;
+            }
+
+            if (curren_Logdata.Logindex+1 == Logs.Count)
+            {
+                Next_Move_Button_IsEnabled = false;
+                Last_Move_Button_IsEnabled = true;
+            }
+
+            if (curren_Logdata.Logindex == 0)
+            {
+                Next_Move_Button_IsEnabled = true;
+                Last_Move_Button_IsEnabled = false;
+            }
+
+            int follower = 0;
+            int grid = 0;
+            foreach(Field f in curren_Logdata.Recorded_Playground)
+            {
+                LogFields[grid][follower] = f;
+                follower++;
+                if(follower >8)
+                {
+                    follower = 0;
+                    grid++;
+                }
+            }
 
         }
+        public void Next_Move_Tapped(object sender, TappedEventArgs e)
+        {
+            if (Fields.Count == 9 && Fields[0].Count == 9)
+            {
+                if (Logs.Count > 1)
+                {
+                    last_Logdata = curren_Logdata;
 
+                    curren_Logdata = Logs[Logs.Count - curren_Logdata.Logindex-2];
+
+                    curren_Logdata.Is_Select = true;
+
+                    last_Logdata.Is_Select = false;
+
+                    if (curren_Logdata.Logindex+1 == Logs.Count)
+                    {
+                        Next_Move_Button_IsEnabled = false;
+                        Last_Move_Button_IsEnabled = true;
+                    }
+                    else
+                    {
+                        Next_Move_Button_IsEnabled = true;
+                        Last_Move_Button_IsEnabled = true;
+                    }
+
+                    int follower = 0;
+                    int grid = 0;
+                    foreach (Field f in curren_Logdata.Recorded_Playground)
+                    {
+                        LogFields[grid][follower] = f;
+                        follower++;
+                        if (follower > 8)
+                        {
+                            follower = 0;
+                            grid++;
+                        }
+                    }
+                }
+            }
+        }
+        public void Close_Logs_Tapped(object sender, TappedEventArgs e)
+        {
+            Logs_IsEnabled = false;
+            curren_Logdata.Is_Select = false ;
+            curren_Logdata = null;
+            last_Logdata = null;
+        }
+        public void Last_Move_Tapped(object sender, TappedEventArgs e)
+        {
+            if (Fields.Count == 9 && Fields[0].Count == 9)
+            {
+                if (Logs.Count > 1)
+                {
+                    last_Logdata = curren_Logdata;
+
+                    curren_Logdata = Logs[Logs.Count -curren_Logdata.Logindex ];
+
+                    curren_Logdata.Is_Select = true;
+
+                    last_Logdata.Is_Select = false;
+
+                    if (curren_Logdata.Logindex == 0)
+                    {
+                        Next_Move_Button_IsEnabled = true;
+                        Last_Move_Button_IsEnabled = false;
+                    }
+                    else
+                    {
+                        Next_Move_Button_IsEnabled = true;
+                        Last_Move_Button_IsEnabled = true;
+                    }
+
+                    int follower = 0;
+                    int grid = 0;
+                    foreach (Field f in curren_Logdata.Recorded_Playground)
+                    {
+                        LogFields[grid][follower] = f;
+                        follower++;
+                        if (follower > 8)
+                        {
+                            follower = 0;
+                            grid++;
+                        }
+                    }
+                }
+            }
+        }
 
         public async Task Start_Solving()
         {
@@ -973,6 +1140,8 @@ namespace Pluto.Pages
                 Possebilities_Log.Clear();
                 Denails.Clear();
                 Attampts_Label = 0;
+                Logs.Clear();
+                curren_Logdata = null;
                 started = false;
 
                 Difficulty = (playgroundlist.SelectedItem as Playground).Difficulty;
@@ -1077,10 +1246,9 @@ namespace Pluto.Pages
                                 f.Is_Fault = false;
                                 f.Skips = 0;
                                 f.Is_Saturated = false;
-                                //f.Placeholder_Number_Horizontal = new ObservableCollection<int>();
-                                //f.Placeholder_Number_Vertikal = new ObservableCollection<int>();
                                 f.Is_Clearly = false;
                                 f.Is_Semi_Clearly = false;
+                                f.Possebilities.Clear();
                                 follower++;
 
                                 if (f.Number != 0 && f.Is_Fault == false)
@@ -1109,9 +1277,11 @@ namespace Pluto.Pages
 
         public ObservableRangeCollection<Number> Numbers = new ObservableRangeCollection<Number>();
         public static ObservableRangeCollection<ObservableCollection<Field>> Fields = new ObservableRangeCollection<ObservableCollection<Field>>();
+        public static ObservableRangeCollection<ObservableCollection<Field>> LogFields = new ObservableRangeCollection<ObservableCollection<Field>>();
         public static ObservableCollection<Field> Locked_Fields = new ObservableCollection<Field>();
         public static ObservableCollection<Logdata> Logs = new ObservableCollection<Logdata>();
-
+        public static Logdata curren_Logdata = new Logdata();
+        public static Logdata last_Logdata = new Logdata();
 
 
         public static List<Possebilitie> Possebilities_Log = new List<Possebilitie>();
@@ -1167,6 +1337,39 @@ namespace Pluto.Pages
                 if (Edit_Button_IsEnabled == value)
                     return;
                 edit_button_IsEnabled = value; OnPropertyChanged(nameof(Edit_Button_IsEnabled));
+            }
+        }
+        public bool next_move_button_IsEnabled = false;
+        public bool Next_Move_Button_IsEnabled
+        {
+            get { return next_move_button_IsEnabled; }
+            set
+            {
+                if (Next_Move_Button_IsEnabled == value)
+                    return;
+                next_move_button_IsEnabled = value; OnPropertyChanged(nameof(Next_Move_Button_IsEnabled));
+            }
+        }
+        public bool last_move_button_IsEnabled = false;
+        public bool Last_Move_Button_IsEnabled
+        {
+            get { return last_move_button_IsEnabled; }
+            set
+            {
+                if (Last_Move_Button_IsEnabled == value)
+                    return;
+                last_move_button_IsEnabled = value; OnPropertyChanged(nameof(Last_Move_Button_IsEnabled));
+            }
+        }
+        public bool logs_IsEnabled = false;
+        public bool Logs_IsEnabled
+        {
+            get { return logs_IsEnabled; }
+            set
+            {
+                if (Logs_IsEnabled == value)
+                    return;
+                logs_IsEnabled = value; OnPropertyChanged(nameof(Logs_IsEnabled));
             }
         }
         public bool numberGrid = false;

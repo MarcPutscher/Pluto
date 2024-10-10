@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pluto.Models
 {
-    public class Field : INotifyPropertyChanged
+    public class Field : INotifyPropertyChanged, ICloneable
     {
         public Field() 
         {
@@ -287,7 +287,7 @@ namespace Pluto.Models
             if (sender == null)
                 return;
 
-            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset || (sender as IEnumerable).Cast<int>().Count() == 0)
             {
                 Is_1 = false;
 
@@ -306,13 +306,12 @@ namespace Pluto.Models
                 Is_8 = false;
 
                 Is_9 = false;
+
+                return;
             }
 
             if (sender is IEnumerable)
             {
-                if ((sender as IEnumerable).Cast<int>().Count() == 0)
-                    return;
-
                 int number = (sender as IEnumerable).Cast<int>().Last();
 
                 if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
@@ -560,5 +559,10 @@ namespace Pluto.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

@@ -52,7 +52,6 @@ namespace Pluto.Logic.Algorithmen
                     return false;
                 }
 
-
                 //Ermittle Hidden Single
                 await strategy.Hidden_Single(0);
 
@@ -66,16 +65,19 @@ namespace Pluto.Logic.Algorithmen
                 //await strategy.Naked_Trible();
 
                 ////Ermittle Hidden Pair 
-                //await strategy.Hidden_Pair();
+                await strategy.Hidden_Pair(); 
 
-                ////Ermittle Naked Pair
-                //await strategy.Naked_Pair();
+                //Ermittle Naked Pair
+                await strategy.Naked_Pair();
+
 
                 ////Ermittle Locked Candidates Typ 1
                 //await strategy.Locked_Candidates_Typ_1();
 
                 ////Ermittle Locked Candidates Typ 2
                 //await strategy.Locked_Candidates_Typ_2();
+
+                await Task.Delay(1);
 
                 mainPage.Attampts_Label++;
             }
