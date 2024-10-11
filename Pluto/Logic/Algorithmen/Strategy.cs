@@ -105,6 +105,16 @@ namespace Pluto.Logic.Algorithmen
                             //Logbucheintrag
                             MainPage.Logs.Insert(0, new Logdata() { ID = f.Id, Grid = f.Grid_Number, Row = f.Row_Number, Column = f.Column_Number }.Place_Number_In_Field(f.Number, all_fields, Logdata.Strategies.Naked_Single));
 
+                            //Wenn diese Technik noch nicht angewand wurde dann erhöhe den Counter dieser Technik, sonst erstelle die Technik in den Used_Technics
+                            if(MainPage.Used_Technics.Any(x=>x.Technic == Used_Technic.Technics.Naked_Single))
+                            {
+                                MainPage.Used_Technics.FirstOrDefault(x => x.Technic == Used_Technic.Technics.Naked_Single).Count++;
+                            }
+                            else
+                            {
+                                MainPage.Used_Technics.Add(new Used_Technic() { Count = 1 , Technic = Used_Technic.Technics.Naked_Single});
+                            }
+
                             //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                             await Waiter.Waiting();
 
@@ -232,6 +242,16 @@ namespace Pluto.Logic.Algorithmen
                                 //Logbucheintrag
                                 MainPage.Logs.Insert(0, new Logdata() { ID = f.Id, Grid = f.Grid_Number, Row = f.Row_Number, Column = f.Column_Number }.Place_Number_In_Field(f.Number, all_fields, Logdata.Strategies.Hidden_Single));
 
+                                //Wenn diese Technik noch nicht angewand wurde dann erhöhe den Counter dieser Technik, sonst erstelle die Technik in den Used_Technics
+                                if (MainPage.Used_Technics.Any(x => x.Technic == Used_Technic.Technics.Hidden_Single))
+                                {
+                                    MainPage.Used_Technics.FirstOrDefault(x => x.Technic == Used_Technic.Technics.Hidden_Single).Count++;
+                                }
+                                else
+                                {
+                                    MainPage.Used_Technics.Add(new Used_Technic() { Count = 1, Technic = Used_Technic.Technics.Hidden_Single });
+                                }
+
                                 //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                 await Waiter.Waiting();
 
@@ -327,9 +347,9 @@ namespace Pluto.Logic.Algorithmen
                                     MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     await Waiter.Waiting();
-                                }
 
-                                is_saturadet = false;
+                                    is_saturadet = false;
+                                }
                             }
                         }
 
@@ -346,9 +366,9 @@ namespace Pluto.Logic.Algorithmen
                                         MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
                                         //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                         await Waiter.Waiting();
-                                    }
 
-                                    is_saturadet = false;
+                                        is_saturadet = false;
+                                    }
                                 }
                             }
                         }
@@ -366,9 +386,9 @@ namespace Pluto.Logic.Algorithmen
                                         MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
                                         //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                         await Waiter.Waiting();
-                                    }
 
-                                    is_saturadet = false;
+                                        is_saturadet = false;
+                                    }
                                 }
                             }
                         }
@@ -391,9 +411,9 @@ namespace Pluto.Logic.Algorithmen
                                     MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     await Waiter.Waiting();
-                                }
 
-                                is_saturadet = false;
+                                    is_saturadet = false;
+                                }
                             }
                         }
                     }
@@ -417,16 +437,27 @@ namespace Pluto.Logic.Algorithmen
                                         MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Pair));
                                         //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                         await Waiter.Waiting();
-                                    }
 
-                                    is_saturadet = false;
+                                        is_saturadet = false;
+                                    }
                                 }
                             }
                         }
                     }
 
                     if (is_saturadet == false)
+                    {
+                        //Wenn diese Technik noch nicht angewand wurde dann erhöhe den Counter dieser Technik, sonst erstelle die Technik in den Used_Technics
+                        if (MainPage.Used_Technics.Any(x => x.Technic == Used_Technic.Technics.Naked_Pair))
+                        {
+                            MainPage.Used_Technics.FirstOrDefault(x => x.Technic == Used_Technic.Technics.Naked_Pair).Count++;
+                        }
+                        else
+                        {
+                            MainPage.Used_Technics.Add(new Used_Technic() { Count = 1, Technic = Used_Technic.Technics.Naked_Pair });
+                        }
                         return;
+                    }
                 }
             }
         }
@@ -496,6 +527,8 @@ namespace Pluto.Logic.Algorithmen
                                     MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[0].Id, Grid = hidden_pair[0].Grid_Number, Row = hidden_pair[0].Row_Number, Column = hidden_pair[0].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     await Waiter.Waiting();
+
+                                    is_saturadet = false;
                                 }
                                 if (hidden_pair[1].Possebilities.Remove(np) == true)
                                 {
@@ -503,6 +536,8 @@ namespace Pluto.Logic.Algorithmen
                                     MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[1].Id, Grid = hidden_pair[1].Grid_Number, Row = hidden_pair[1].Row_Number, Column = hidden_pair[1].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     await Waiter.Waiting();
+
+                                    is_saturadet = false;
                                 }
                             }
 
@@ -519,9 +554,9 @@ namespace Pluto.Logic.Algorithmen
                                             MainPage.Logs.Add(new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                             //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                             await Waiter.Waiting();
-                                        }
 
-                                        is_saturadet = false;
+                                            is_saturadet = false;
+                                        }
                                     }
                                 }
                             }
@@ -539,9 +574,9 @@ namespace Pluto.Logic.Algorithmen
                                             MainPage.Logs.Add(new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                             //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                             await Waiter.Waiting();
-                                        }
 
-                                        is_saturadet = false;
+                                            is_saturadet = false;
+                                        }
                                     }
                                 }
                             }
@@ -559,9 +594,9 @@ namespace Pluto.Logic.Algorithmen
                                             MainPage.Logs.Add(new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                             //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                             await Waiter.Waiting();
-                                        }
 
-                                        is_saturadet = false;
+                                            is_saturadet = false;
+                                        }
                                     }
                                 }
                             }
@@ -603,6 +638,8 @@ namespace Pluto.Logic.Algorithmen
                                     MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[0].Id, Grid = hidden_pair[0].Grid_Number, Row = hidden_pair[0].Row_Number, Column = hidden_pair[0].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     await Waiter.Waiting();
+
+                                    is_saturadet = false;
                                 }
                                 if (hidden_pair[1].Possebilities.Remove(np) == true)
                                 {
@@ -610,12 +647,9 @@ namespace Pluto.Logic.Algorithmen
                                     MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[1].Id, Grid = hidden_pair[1].Grid_Number, Row = hidden_pair[1].Row_Number, Column = hidden_pair[1].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     await Waiter.Waiting();
-                                }
 
-                                //if (!hidden_pair[0].Denails.Any(x => x == np))
-                                //    hidden_pair[0].Denails.Add(np);
-                                //if (!hidden_pair[1].Denails.Any(x => x == np))
-                                //    hidden_pair[1].Denails.Add(np);
+                                    is_saturadet = false;
+                                }
                             }
                         }
                     }
@@ -655,6 +689,8 @@ namespace Pluto.Logic.Algorithmen
                                     MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[0].Id, Grid = hidden_pair[0].Grid_Number, Row = hidden_pair[0].Row_Number, Column = hidden_pair[0].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     await Waiter.Waiting();
+
+                                    is_saturadet = false;
                                 }
                                 if (hidden_pair[1].Possebilities.Remove(np) == true)
                                 {
@@ -662,13 +698,26 @@ namespace Pluto.Logic.Algorithmen
                                     MainPage.Logs.Insert(0, new Logdata() { ID = hidden_pair[1].Id, Grid = hidden_pair[1].Grid_Number, Row = hidden_pair[1].Row_Number, Column = hidden_pair[1].Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Pair));
                                     //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
                                     await Waiter.Waiting();
+
+                                    is_saturadet = false;
                                 }
                             }
                         }
                     }
 
-                    if(is_saturadet == false)
+                    if (is_saturadet == false)
+                    {
+                        //Wenn diese Technik noch nicht angewand wurde dann erhöhe den Counter dieser Technik, sonst erstelle die Technik in den Used_Technics
+                        if (MainPage.Used_Technics.Any(x => x.Technic == Used_Technic.Technics.Hidden_Pair))
+                        {
+                            MainPage.Used_Technics.FirstOrDefault(x => x.Technic == Used_Technic.Technics.Hidden_Pair).Count++;
+                        }
+                        else
+                        {
+                            MainPage.Used_Technics.Add(new Used_Technic() { Count = 1, Technic = Used_Technic.Technics.Hidden_Pair });
+                        }
                         return;
+                    }
                 }
             }
         }
@@ -707,22 +756,22 @@ namespace Pluto.Logic.Algorithmen
                         continue;
 
                     //Wenn es in dem Block nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Grid_Number == f.Grid_Number) == 3)
+                    if (all_fields.Where(x => (x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Possebilities.Count() == 2) || (x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Possebilities.Count == 3)).Count(x => x.Grid_Number == f.Grid_Number) == 3)
                     {
                         //Ermittelt die offenen Drillinge
-                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Grid_Number == f.Grid_Number).ToList();
+                        naked_trible = all_fields.Where(x => (x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Possebilities.Count() == 2) || (x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Possebilities.Count == 3)).Where(x => x.Grid_Number == f.Grid_Number).ToList();
 
                         //löscht alle gleichen Zahlen die in dem Block als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (all_fields.Any(x => x.Number != 0 && x.Grid_Number == f.Grid_Number && naked_trible.Contains(x) == false))
+                        foreach (Field field in all_fields.Where(x => x.Number == 0 && x.Grid_Number == f.Grid_Number && naked_trible.Contains(x) == false && f.Possebilities.Intersect(x.Possebilities).Any()).ToList())
                         {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0 && x.Grid_Number == f.Grid_Number && naked_trible.Contains(x) == false && f.Possebilities.Intersect(x.Possebilities).Any()).ToList())
+                            foreach (int np in f.Possebilities.Intersect(field.Possebilities))
                             {
-                                foreach (int np in f.Possebilities.Intersect(field.Possebilities))
+                                if (field.Possebilities.Remove(np) == true)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Trible));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
 
                                     is_saturadet = false;
                                 }
@@ -736,12 +785,15 @@ namespace Pluto.Logic.Algorithmen
                             {
                                 foreach (int np in f.Possebilities.Intersect(field.Possebilities))
                                 {
-                                    field.Possebilities.Remove(np);
+                                    if (field.Possebilities.Remove(np) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Trible));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
 
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
-                                    is_saturadet = false;
+                                        is_saturadet = false;
+                                    }
                                 }
                             }
                         }
@@ -753,76 +805,81 @@ namespace Pluto.Logic.Algorithmen
                             {
                                 foreach (int np in f.Possebilities.Intersect(field.Possebilities))
                                 {
-                                    field.Possebilities.Remove(np);
+                                    if (field.Possebilities.Remove(np) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Trible));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
 
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
-
-                                    is_saturadet = false;
+                                        is_saturadet = false;
+                                    }
                                 }
                             }
                         }
-
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
                     }
 
                     //Wenn es in der Reihe nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Row_Number == f.Row_Number) == 3)
+                    if (all_fields.Where(x => (x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Possebilities.Count() == 2) || (x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Possebilities.Count == 3)).Count(x => x.Row_Number == f.Row_Number) == 3)
                     {
                         //Ermittelt die offenen Drillinge
-                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Row_Number == f.Row_Number).ToList();
+                        naked_trible = all_fields.Where(x => (x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Possebilities.Count() == 2) || (x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Possebilities.Count == 3)).Where(x => x.Row_Number == f.Row_Number).ToList();
 
                         //löscht alle gleichen Zahlen die in der Reihe als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (naked_trible[0].Row_Number == naked_trible[1].Row_Number && naked_trible[1].Row_Number == naked_trible[2].Row_Number)
+                        foreach (Field field in all_fields.Where(x => x.Number == 0 && x.Row_Number == f.Row_Number && naked_trible.Contains(x) == false && f.Possebilities.Intersect(x.Possebilities).Any()).ToList())
                         {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0 && x.Row_Number == f.Row_Number && naked_trible.Contains(x) == false && f.Possebilities.Intersect(x.Possebilities).Any()).ToList())
+                            foreach (int np in f.Possebilities.Intersect(field.Possebilities))
                             {
-                                foreach (int np in f.Possebilities.Intersect(field.Possebilities))
+                                if (field.Possebilities.Remove(np) == true)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Trible));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
 
                                     is_saturadet = false;
                                 }
                             }
                         }
-
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
                     }
 
                     //Wenn es in der Spalte nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeitsliste besitzt
-                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Column_Number == f.Column_Number) == 3)
+                    if (all_fields.Where(x => (x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Possebilities.Count() == 2) || (x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Possebilities.Count == 3)).Count(x => x.Column_Number == f.Column_Number) == 3)
                     {
                         //Ermittelt die offenen Drillinge
-                        naked_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Column_Number == f.Column_Number).ToList();
+                        naked_trible = all_fields.Where(x => (x.Possebilities.Intersect(f.Possebilities).Count() == 2 && x.Possebilities.Count() == 2) || (x.Possebilities.Intersect(f.Possebilities).Count() == 3 && x.Possebilities.Count == 3)).Where(x => x.Column_Number == f.Column_Number).ToList();
 
-                        //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen und fügt sie zu der Verweigerungsliste hinzu
-                        if (naked_trible[0].Column_Number == naked_trible[1].Column_Number && naked_trible[1].Column_Number == naked_trible[2].Column_Number)
+                        //löscht alle gleichen Zahlen die in der Spalte als Möglichkeit stehen
+                        foreach (Field field in all_fields.Where(x => x.Number == 0 && x.Column_Number == f.Column_Number && naked_trible.Contains(x) == false && f.Possebilities.Intersect(x.Possebilities).Any()).ToList())
                         {
-                            foreach (Field field in all_fields.Where(x => x.Number != 0 && x.Column_Number == f.Column_Number && naked_trible.Contains(x) == false && f.Possebilities.Intersect(x.Possebilities).Any()).ToList())
+                            foreach (int np in f.Possebilities.Intersect(field.Possebilities))
                             {
-                                foreach (int np in f.Possebilities.Intersect(field.Possebilities))
+                                if (field.Possebilities.Remove(np) == true)
                                 {
-                                    field.Possebilities.Remove(np);
-
-                                    //if (!field.Denails.Any(x => x == np))
-                                    //    field.Denails.Add(np);
+                                    //Logbucheintrag
+                                    MainPage.Logs.Insert(0, new Logdata() { ID = field.Id, Grid = field.Grid_Number, Row = field.Row_Number, Column = field.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Naked_Trible));
+                                    //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                    await Waiter.Waiting();
 
                                     is_saturadet = false;
                                 }
                             }
                         }
-
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
                     }
 
                     if (is_saturadet == false)
+                    {
+                        //Wenn diese Technik noch nicht angewand wurde dann erhöhe den Counter dieser Technik, sonst erstelle die Technik in den Used_Technics
+                        if (MainPage.Used_Technics.Any(x => x.Technic == Used_Technic.Technics.Naked_Trible))
+                        {
+                            MainPage.Used_Technics.FirstOrDefault(x => x.Technic == Used_Technic.Technics.Naked_Trible).Count++;
+                        }
+                        else
+                        {
+                            MainPage.Used_Technics.Add(new Used_Technic() { Count = 1, Technic = Used_Technic.Technics.Naked_Trible });
+                        }
                         return;
+                    }
                 }
             }
         }
@@ -861,112 +918,147 @@ namespace Pluto.Logic.Algorithmen
                         continue;
 
                     //Wenn es in dem Block nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x=> x.Grid_Number == f.Grid_Number) == 3)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 ).Count(x=> x.Grid_Number == f.Grid_Number) == 3)
                     {
                         //Ermittelt die verdeckten Drillinge
-                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x=>x.Grid_Number == f.Grid_Number).ToList();
+                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2).Where(x=>x.Grid_Number == f.Grid_Number).ToList();
 
                         //Eine Liste an Möglichkeiten die zu den verdeckten Drillingen gehören 
-                        List<int> trible_numbers = new List<int>(f.Possebilities);
-
-                        //Ermittelt die Möglichkeiten die nicht zum Drilling gehören (Möglichkeiten die auch noch in einem anderen Feld zufinden ist ausßer den Drillingen)
-                        foreach (int i in f.Possebilities)
+                        List<int> trible_numbers = new List<int>();
+                        foreach(Field ht in hidden_trible)
                         {
-                            if(all_fields.Any(x=>x.Grid_Number == f.Grid_Number && x.Number != 0 && x.Possebilities.Contains(i) && hidden_trible.Contains(x) == false))
-                                trible_numbers.Remove(i);
-                        }
-
-                        //löscht all anderen Möglichkeiten in den versteckten Drillinge die nicht zu der gleichen Teilmenge gehören
-                        foreach (Field ht in hidden_trible)
-                        {
-                            List<int> tribles = ht.Possebilities.Where(x => trible_numbers.Contains(x) == false).ToList();
-                            foreach (int np in tribles)
+                            //Für alle Möglichkeiten die es in dem Block in kein anderen Feld existiert außer in den Drilling
+                            foreach (int tripble in ht.Possebilities.Where(y => all_fields.Where(x => x.Number == 0 && x.Grid_Number == f.Grid_Number).Where(x=>x.Possebilities.Contains(y) == true).Any(x => hidden_trible.Contains(x) == false) == false).ToList())
                             {
-                                ht.Possebilities.Remove(np);
-
-                                //if (!ht.Denails.Any(x => x == np))
-                                //    ht.Denails.Add(np);
-
-                                is_saturadet = false;
+                                if (trible_numbers.Contains(tripble) == false)
+                                {
+                                    trible_numbers.Add(tripble);
+                                }
                             }
                         }
 
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
+                        //Wenn die Drillinge drei Zahlen besitzten
+                        if (trible_numbers.Count == 3)
+                        {
+                            //löscht all anderen Möglichkeiten in den versteckten Drillinge die nicht zu der gleichen Teilmenge gehören
+                            foreach (Field ht in hidden_trible)
+                            {
+                                List<int> tribles = ht.Possebilities.Where(x => trible_numbers.Contains(x) == false).ToList();
+                                foreach (int np in tribles)
+                                {
+                                    if (ht.Possebilities.Remove(np) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = ht.Id, Grid = ht.Grid_Number, Row = ht.Row_Number, Column = ht.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Trible));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+
+                                        is_saturadet = false;
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     //Wenn es in der Reihe nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeiten besitzen
-                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Row_Number == f.Row_Number) == 3)
+                    if (all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 ).Count(x => x.Row_Number == f.Row_Number) == 3)
                     {
                         //Ermittelt die verdeckten Drillinge
-                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Row_Number == f.Row_Number).ToList();
+                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2).Where(x => x.Row_Number == f.Row_Number).ToList();
 
                         //Eine Liste an Möglichkeiten die zu den verdeckten Drillingen gehören 
-                        List<int> trible_numbers = new List<int> (f.Possebilities);
-
-                        //Ermittelt die Möglichkeiten die nicht zum Drilling gehören (Möglichkeiten die auch noch in einem anderen Feld zufinden ist ausßer den Drillingen)
-                        foreach (int i in f.Possebilities)
-                        {
-                            if (all_fields.Any(x => x.Row_Number == f.Row_Number && x.Number != 0 && x.Possebilities.Contains(i) && hidden_trible.Contains(x) == false))
-                                trible_numbers.Remove(i);
-                        }
-
-                        //löscht all anderen Möglichkeiten in den versteckten Drillinge die nicht zu der gleichen Teilmenge gehören
+                        List<int> trible_numbers = new List<int>();
                         foreach (Field ht in hidden_trible)
                         {
-                            List<int> tribles = ht.Possebilities.Where(x => trible_numbers.Contains(x) == false).ToList();
-                            foreach (int np in tribles)
+                            //Für alle Möglichkeiten die es in der Reihe in kein anderen Feld existiert außer in den Drilling
+                            foreach (int tripble in ht.Possebilities.Where(y => all_fields.Where(x => x.Number == 0 && x.Row_Number == f.Row_Number).Where(x => x.Possebilities.Contains(y) == true).Any(x => hidden_trible.Contains(x) == false) == false).ToList())
                             {
-                                ht.Possebilities.Remove(np);
-
-                                //if (!ht.Denails.Any(x => x == np))
-                                //    ht.Denails.Add(np);
-
-                                is_saturadet = false;
+                                if (trible_numbers.Contains(tripble) == false)
+                                {
+                                    trible_numbers.Add(tripble);
+                                }
                             }
                         }
 
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
+                        //Wenn die Drillinge drei Zahlen besitzten
+                        if (trible_numbers.Count == 3)
+                        {
+                            //löscht all anderen Möglichkeiten in den versteckten Drillinge die nicht zu der gleichen Teilmenge gehören
+                            foreach (Field ht in hidden_trible)
+                            {
+                                List<int> tribles = ht.Possebilities.Where(x => trible_numbers.Contains(x) == false).ToList();
+                                foreach (int np in tribles)
+                                {
+                                    if (ht.Possebilities.Remove(np) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = ht.Id, Grid = ht.Grid_Number, Row = ht.Row_Number, Column = ht.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Trible));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+
+                                        is_saturadet = false;
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     //Wenn es in der Spalte nur drei Feld gibt die zwischen zwei und drei Zahlen als gleiche Teilmenge an Möglichkeitsliste besitzt
-                    if(all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Count(x => x.Column_Number == f.Column_Number) == 3)
+                    if(all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2 ).Count(x => x.Column_Number == f.Column_Number) == 3)
                     {
                         //Ermittelt die verdeckten Drillinge
-                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() == 2 || x.Possebilities.Intersect(f.Possebilities).Count() == 3).Where(x => x.Column_Number == f.Column_Number).ToList();
+                        hidden_trible = all_fields.Where(x => x.Possebilities.Intersect(f.Possebilities).Count() >= 2).Where(x => x.Column_Number == f.Column_Number).ToList();
 
                         //Eine Liste an Möglichkeiten die zu den verdeckten Drillingen gehören 
-                        List<int> trible_numbers = new List<int>(f.Possebilities);
-
-                        //Ermittelt die Möglichkeiten die nicht zum Drilling gehören (Möglichkeiten die auch noch in einem anderen Feld zufinden ist ausßer den Drillingen)
-                        foreach (int i in f.Possebilities)
-                        {
-                            if (all_fields.Any(x => x.Column_Number == f.Column_Number && x.Number != 0 && x.Possebilities.Contains(i) && hidden_trible.Contains(x) == false))
-                                trible_numbers.Remove(i);
-                        }
-
-                        //löscht all anderen Möglichkeiten in den versteckten Drillinge die nicht zu der gleichen Teilmenge gehören
+                        List<int> trible_numbers = new List<int>();
                         foreach (Field ht in hidden_trible)
                         {
-                            List<int> tribles = ht.Possebilities.Where(x => trible_numbers.Contains(x) == false).ToList();
-                            foreach (int np in tribles)
+                            //Für alle Möglichkeiten die es in der Spalte in kein anderen Feld existiert außer in den Drilling
+                            foreach (int tripble in ht.Possebilities.Where(y => all_fields.Where(x => x.Number == 0 && x.Column_Number == f.Column_Number).Where(x => x.Possebilities.Contains(y) == true).Any(x => hidden_trible.Contains(x) == false) == false).ToList())
                             {
-                                ht.Possebilities.Remove(np);
-
-                                //if (!ht.Denails.Any(x => x == np))
-                                //    ht.Denails.Add(np);
-
-                                is_saturadet = false;
+                                if (trible_numbers.Contains(tripble) == false)
+                                {
+                                    trible_numbers.Add(tripble);
+                                }
                             }
                         }
 
-                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
-                        await Waiter.Waiting();
+                        //Wenn die Drillinge drei Zahlen besitzten
+                        if (trible_numbers.Count == 3)
+                        {
+                            //löscht all anderen Möglichkeiten in den versteckten Drillinge die nicht zu der gleichen Teilmenge gehören
+                            foreach (Field ht in hidden_trible)
+                            {
+                                List<int> tribles = ht.Possebilities.Where(x => trible_numbers.Contains(x) == false).ToList();
+                                foreach (int np in tribles)
+                                {
+                                    if (ht.Possebilities.Remove(np) == true)
+                                    {
+                                        //Logbucheintrag
+                                        MainPage.Logs.Insert(0, new Logdata() { ID = ht.Id, Grid = ht.Grid_Number, Row = ht.Row_Number, Column = ht.Column_Number }.Removed_Market_Number_From_Field(np, all_fields, Logdata.Strategies.Hidden_Trible));
+                                        //Setzt die Zeit fest die gewartet wird um die aktuelle Zahl zusehen 
+                                        await Waiter.Waiting();
+
+                                        is_saturadet = false;
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     if (is_saturadet == false)
+                    {
+                        //Wenn diese Technik noch nicht angewand wurde dann erhöhe den Counter dieser Technik, sonst erstelle die Technik in den Used_Technics
+                        if (MainPage.Used_Technics.Any(x => x.Technic == Used_Technic.Technics.Hidden_Trible))
+                        {
+                            MainPage.Used_Technics.FirstOrDefault(x => x.Technic == Used_Technic.Technics.Hidden_Trible).Count++;
+                        }
+                        else
+                        {
+                            MainPage.Used_Technics.Add(new Used_Technic() { Count = 1, Technic = Used_Technic.Technics.Hidden_Trible });
+                        }
                         return;
+                    }
                 }
             }
         }

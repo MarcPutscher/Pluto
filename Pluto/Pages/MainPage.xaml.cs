@@ -167,6 +167,8 @@ namespace Pluto.Pages
             number_collectionview.ItemsSource = Numbers;
 
             loglist.ItemsSource = Logs;
+
+            usedtechniclist.ItemsSource = Used_Technics;
         }
 
         public async void Field_Tapped(object sender, TappedEventArgs e)
@@ -489,12 +491,14 @@ namespace Pluto.Pages
                 Difficulty = null;
 
                 field_position_marker =  0 ;
+                next_gen_marker = 0 ;
                 field_stop_position = 1;
                 skip_stop_position = 0;
                 Possebilities_Log.Clear();
                 Denails.Clear();
                 Attampts_Label = 0;
                 Logs.Clear();
+                Used_Technics.Clear();
                 curren_Logdata = null;
                 started = false;
 
@@ -597,11 +601,13 @@ namespace Pluto.Pages
                 }
 
                 field_position_marker = 0;
+                next_gen_marker = 0;
                 field_stop_position = 1;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
                 Logs.Clear();
+                Used_Technics.Clear();
                 curren_Logdata = null;
                 started = false;
 
@@ -664,11 +670,13 @@ namespace Pluto.Pages
 
                 stopwatch = null;
                 field_position_marker = 0;
+                next_gen_marker = 0;
                 field_stop_position = 1;
                 skip_stop_position = 0;
                 Possebilities_Log = new List<Possebilitie>();
                 Attampts_Label = 0;
                 Logs.Clear();
+                Used_Technics.Clear();
                 curren_Logdata = null;
                 started = false;
             }
@@ -678,6 +686,8 @@ namespace Pluto.Pages
         public void Logdata_Tapped(object sender, TappedEventArgs e)
         {
             Status_Solver = "Abgebrochen";
+
+            tokensource?.Cancel();
 
             Logdata? current = (sender as StackLayout)?.BindingContext as Logdata;
             if (current == null)
@@ -861,6 +871,7 @@ namespace Pluto.Pages
                 if(Status_Solver == "Bereit")
                 {
                     field_position_marker = 0;
+                    next_gen_marker = 0;
                     field_stop_position = 1;
                     skip_stop_position = 0;
                     Possebilities_Log = new List<Possebilitie>();
@@ -1135,12 +1146,14 @@ namespace Pluto.Pages
                 Edit_Button_IsEnabled = true;
 
                 field_position_marker = 0;
+                next_gen_marker = 0;
                 field_stop_position = 1;
                 skip_stop_position = 0;
                 Possebilities_Log.Clear();
                 Denails.Clear();
                 Attampts_Label = 0;
                 Logs.Clear();
+                Used_Technics.Clear();
                 curren_Logdata = null;
                 started = false;
 
@@ -1280,6 +1293,7 @@ namespace Pluto.Pages
         public static ObservableRangeCollection<ObservableCollection<Field>> LogFields = new ObservableRangeCollection<ObservableCollection<Field>>();
         public static ObservableCollection<Field> Locked_Fields = new ObservableCollection<Field>();
         public static ObservableCollection<Logdata> Logs = new ObservableCollection<Logdata>();
+        public static ObservableCollection<Used_Technic> Used_Technics = new ObservableCollection<Used_Technic>();
         public static Logdata curren_Logdata = new Logdata();
         public static Logdata last_Logdata = new Logdata();
 
@@ -1298,6 +1312,7 @@ namespace Pluto.Pages
 
         CancellationTokenSource tokensource = null;
 
+        public static int next_gen_marker = 0;
         public static int field_position_marker = 0;
         public static int field_stop_position = 1;
         public static int block_stop_position = 0;

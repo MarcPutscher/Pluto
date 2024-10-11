@@ -52,30 +52,94 @@ namespace Pluto.Logic.Algorithmen
                     return false;
                 }
 
-                //Ermittle Hidden Single
-                await strategy.Hidden_Single(0);
+                switch(MainPage.next_gen_marker)
+                {
+                    case 0:
+                        {
+                            MainPage.next_gen_marker = 1;
+                            //Ermittle Hidden Single
+                            await strategy.Hidden_Single(0);
 
-                //Ermittle Naked Single
-                await strategy.Naked_Single(0);
+                            MainPage.next_gen_marker = 2;
+                            //Ermittle Naked Single
+                            await strategy.Naked_Single(0);
 
-                ////Ermittle Hidden Trible
-                //await strategy.Hidden_Trible();
+                            MainPage.next_gen_marker = 3;
+                            //Ermittle Hidden Trible
+                            await strategy.Hidden_Trible();
 
-                ////Ermittle Naked Trible
-                //await strategy.Naked_Trible();
+                            MainPage.next_gen_marker = 4;
+                            //Ermittle Naked Trible
+                            await strategy.Naked_Trible();
 
-                ////Ermittle Hidden Pair 
-                await strategy.Hidden_Pair(); 
+                            MainPage.next_gen_marker = 5;
+                            ////Ermittle Hidden Pair 
+                            await strategy.Hidden_Pair();
 
-                //Ermittle Naked Pair
-                await strategy.Naked_Pair();
+                            MainPage.next_gen_marker = 6;
+                            //Ermittle Naked Pair
+                            await strategy.Naked_Pair();
 
+                            //MainPage.next_gen_marker = 7;
+                            ////Ermittle Locked Candidates Typ 1
+                            //await strategy.Locked_Candidates_Typ_1();
 
-                ////Ermittle Locked Candidates Typ 1
-                //await strategy.Locked_Candidates_Typ_1();
+                            //MainPage.next_gen_marker = 8;
+                            ////Ermittle Locked Candidates Typ 2
+                            //await strategy.Locked_Candidates_Typ_2();
 
-                ////Ermittle Locked Candidates Typ 2
-                //await strategy.Locked_Candidates_Typ_2();
+                            MainPage.next_gen_marker = 0;
+                            break;
+                        }
+
+                    case 1:
+                        //Ermittle Hidden Single
+                        await strategy.Hidden_Single(0);
+                        MainPage.next_gen_marker = 0;
+                        break;
+
+                    case 2:
+                        //Ermittle Naked Single
+                        await strategy.Naked_Single(0);
+                        MainPage.next_gen_marker = 0;
+                        break;
+
+                    case 3:
+                    //Ermittle Hidden Trible
+                    await strategy.Hidden_Trible();
+                    MainPage.next_gen_marker = 0;
+                    break;
+
+                    case 4:
+                        //Ermittle Naked Trible
+                        await strategy.Naked_Trible();
+                        MainPage.next_gen_marker = 0;
+                        break;
+
+                    case 5:
+                    ////Ermittle Hidden Pair 
+                    await strategy.Hidden_Pair();
+                    MainPage.next_gen_marker = 0;
+                    break;
+
+                    case 6:
+                    //Ermittle Naked Pair
+                    await strategy.Naked_Pair();
+                    MainPage.next_gen_marker = 0;
+                    break;
+
+                    case 7:
+                    //Ermittle Locked Candidates Typ 1
+                    await strategy.Locked_Candidates_Typ_1();
+                    MainPage.next_gen_marker = 0;
+                    break;
+
+                    case 8:
+                    //Ermittle Locked Candidates Typ 2
+                    await strategy.Locked_Candidates_Typ_2();
+                    MainPage.next_gen_marker = 0;
+                    break;
+                }
 
                 await Task.Delay(1);
 

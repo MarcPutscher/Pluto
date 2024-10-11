@@ -589,259 +589,263 @@
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*" RowDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
             <StackLayout Orientation="Vertical" Grid.ColumnSpan="3" x:Name="Spielfeldoptionen" Spacing="0" Opacity="0" Margin="0,-20,0,50" HorizontalOptions="CenterAndExpand" IsVisible="False">
                 <StackLayout Spacing="0" Padding="0" IsVisible="{Binding Logs_IsEnabled, Converter={toolkit:InvertedBoolConverter}}">
-                <StackLayout Orientation="Horizontal">
-                    <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Create_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,20,0" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
-                        <Label Text="Spielfeld erstellen" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
-                            <Label.FontSize>
-                                <OnPlatform x:TypeArguments="x:Double">
-                                    <On Platform="Android" Value="15"/>
-                                    <On Platform="WinUI" Value="15"/>
-                                </OnPlatform>
-                            </Label.FontSize>
-                            <Label.Triggers>
-                                <DataTrigger TargetType="Label" Binding="{Binding Create_Button_IsEnabled}" Value="False">
-                                    <Setter Property="TextColor">
-                                        <OnPlatform x:TypeArguments="Color">
-                                            <On Platform="Android" Value="Black"/>
-                                            <On Platform="WinUI" Value="White"/>
-                                        </OnPlatform>
-                                    </Setter>
-                                </DataTrigger>
-                            </Label.Triggers>
-                        </Label>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Create_Tapped"/>
-                        </Border.GestureRecognizers>
-                        <Border.Padding>
-                            <OnPlatform x:TypeArguments="Thickness">
-                                <On Platform="Android" Value="10,5,10,5"/>
-                                <On Platform="WinUI" Value="15,5,15,5"/>
-                            </OnPlatform>
-                        </Border.Padding>
-                    </Border>
-                    <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Delete_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,0,0" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
-                        <Label Text="Spielfeld löschen" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
-                            <Label.FontSize>
-                                <OnPlatform x:TypeArguments="x:Double">
-                                    <On Platform="Android" Value="15"/>
-                                    <On Platform="WinUI" Value="15"/>
-                                </OnPlatform>
-                            </Label.FontSize>
-                            <Label.Triggers>
-                                <DataTrigger TargetType="Label" Binding="{Binding Delete_Button_IsEnabled}" Value="False">
-                                    <Setter Property="TextColor">
-                                        <OnPlatform x:TypeArguments="Color">
-                                            <On Platform="Android" Value="Black"/>
-                                            <On Platform="WinUI" Value="White"/>
-                                        </OnPlatform>
-                                    </Setter>
-                                </DataTrigger>
-                            </Label.Triggers>
-                        </Label>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Delete_Tapped"/>
-                        </Border.GestureRecognizers>
-                        <Border.Padding>
-                            <OnPlatform x:TypeArguments="Thickness">
-                                <On Platform="Android" Value="10,5,10,5"/>
-                                <On Platform="WinUI" Value="15,5,15,5"/>
-                            </OnPlatform>
-                        </Border.Padding>
-                    </Border>
-                    <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Edit_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,0,20" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
-                        <Label Text="Spielfeld bearbeiten" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
-                            <Label.FontSize>
-                                <OnPlatform x:TypeArguments="x:Double">
-                                    <On Platform="Android" Value="15"/>
-                                    <On Platform="WinUI" Value="15"/>
-                                </OnPlatform>
-                            </Label.FontSize>
-                            <Label.Triggers>
-                                <DataTrigger TargetType="Label" Binding="{Binding Edit_Button_IsEnabled}" Value="False">
-                                    <Setter Property="TextColor">
-                                        <OnPlatform x:TypeArguments="Color">
-                                            <On Platform="Android" Value="Black"/>
-                                            <On Platform="WinUI" Value="White"/>
-                                        </OnPlatform>
-                                    </Setter>                                
-                                </DataTrigger>
-                            </Label.Triggers>
-                        </Label>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Edit_Tapped"/>
-                        </Border.GestureRecognizers>
-                        <Border.Padding>
-                            <OnPlatform x:TypeArguments="Thickness">
-                                <On Platform="Android" Value="10,5,10,5"/>
-                                <On Platform="WinUI" Value="15,5,15,5"/>
-                            </OnPlatform>
-                        </Border.Padding>
-                    </Border>
-                </StackLayout>
-                <StackLayout Orientation="Horizontal" Margin="10,20,0,0" Spacing="10" HorizontalOptions="FillAndExpand">
-                    <Label Text="Status des Lösers :" TextColor="#ABE4DA"/>
-                    <Label Text="{Binding Status_Solver}" TextColor="Yellow" />
-                    <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#60615F" StrokeThickness="3" IsVisible="False" BackgroundColor="#B6C2CD" Padding="3,1,3,1" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
-                        <Label Text="Reset" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#0A1212"/>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Reset_Tapped"/>
-                        </Border.GestureRecognizers>
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Arbeitet">
-                                <Setter Property="IsVisible" Value="True"></Setter>
-                            </DataTrigger>
-                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Abgebrochen">
-                                <Setter Property="IsVisible" Value="True"></Setter>
-                            </DataTrigger>
-                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Ungelöst">
-                                <Setter Property="IsVisible" Value="True"></Setter>
-                            </DataTrigger>
-                        </Border.Triggers>
-                    </Border>
-                    <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#991E0E" StrokeThickness="3" IsVisible="False" BackgroundColor="#692424" Padding="3,1,3,1" HorizontalOptions="End" VerticalOptions="Center">
-                        <Label Text="Abbruch" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#45B6B3"/>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Cancel_Tapped"/>
-                        </Border.GestureRecognizers>
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Arbeitet">
-                                <Setter Property="IsVisible" Value="True"></Setter>
-                            </DataTrigger>
-                        </Border.Triggers>
-                    </Border>
-                    <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#29990E" StrokeThickness="3" IsVisible="False" BackgroundColor="#296110" Padding="3,1,3,1" HorizontalOptions="End" VerticalOptions="Center">
-                        <Label Text="Weiter" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#45B6B3"/>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Continue_Tapped"/>
-                        </Border.GestureRecognizers>
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Abgebrochen">
-                                <Setter Property="IsVisible" Value="True"></Setter>
-                            </DataTrigger>
-                        </Border.Triggers>
-                    </Border>
-                    <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#29990E" StrokeThickness="3" IsVisible="False" BackgroundColor="#296110" Padding="3,1,3,1" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
-                        <Label Text="Wiederholen" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#45B6B3"/>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Restart_Tapped"/>
-                        </Border.GestureRecognizers>
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Fertig">
-                                <Setter Property="IsVisible" Value="True"></Setter>
-                            </DataTrigger>
-                        </Border.Triggers>
-                    </Border>
-                    <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#60615F" StrokeThickness="3" IsVisible="False" BackgroundColor="#B6C2CD" Padding="3,1,3,1" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
-                        <Label Text="Starten" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#0A1212"/>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Continue_Tapped"/>
-                        </Border.GestureRecognizers>
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Bereit">
-                                <Setter Property="IsVisible" Value="True"/>
-                            </DataTrigger>
-                        </Border.Triggers>
-                    </Border>
-                </StackLayout>
-                <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
-                    <Label Text="Schwierigkeit :" TextColor="#ABE4DA" IsVisible="{Binding Difficulty, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
-                    <Label Text="{Binding Difficulty}" TextColor="Yellow" >
-                        <Label.FontSize>
-                            <OnPlatform x:TypeArguments="x:Double">
-                                <On Platform="Android" Value="15"/>
-                                <On Platform="WinUI" Value="15"/>
-                            </OnPlatform>
-                        </Label.FontSize>
-                    </Label>
-                </StackLayout>
-                <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="Transparent" StrokeThickness="3" IsVisible="False" BackgroundColor="Transparent" Padding="3,1,3,1" HorizontalOptions="StartAndExpand" VerticalOptions="Center">
-                    <CollectionView x:Name="algorithmuslist" HorizontalOptions="End" ItemSizingStrategy="MeasureFirstItem" HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never" Opacity="0"  IsGrouped="False" IsVisible="True" Margin="5,00,00,00" >
-                        <CollectionView.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>Brute-Force</x:String>
-                                <x:String>Brute-Force Advanced</x:String>
-                                <x:String>Brute-Force Next Gen</x:String>
-                                <x:String>Check one direction</x:String>
-                            </x:Array>
-                        </CollectionView.ItemsSource>
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Horizontal" Span="1" VerticalItemSpacing="5" HorizontalItemSpacing="5"/>
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.Header>
-                            <Label Text="Algorithmus :" VerticalOptions="Center" TextColor="#ABE4DA" FontAttributes="None" HorizontalOptions="Center" Margin="0,0,0,10">
+                    <StackLayout Orientation="Horizontal">
+                        <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Create_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,20,0" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
+                            <Label Text="Spielfeld erstellen" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
                                 <Label.FontSize>
                                     <OnPlatform x:TypeArguments="x:Double">
-                                        <On Platform="Android" Value="10"/>
+                                        <On Platform="Android" Value="15"/>
+                                        <On Platform="WinUI" Value="15"/>
+                                    </OnPlatform>
+                                </Label.FontSize>
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Create_Button_IsEnabled}" Value="False">
+                                        <Setter Property="TextColor">
+                                            <OnPlatform x:TypeArguments="Color">
+                                                <On Platform="Android" Value="Black"/>
+                                                <On Platform="WinUI" Value="White"/>
+                                            </OnPlatform>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Create_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Padding>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="Android" Value="10,5,10,5"/>
+                                    <On Platform="WinUI" Value="15,5,15,5"/>
+                                </OnPlatform>
+                            </Border.Padding>
+                        </Border>
+                        <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Delete_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,0,0" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
+                            <Label Text="Spielfeld löschen" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="15"/>
+                                        <On Platform="WinUI" Value="15"/>
+                                    </OnPlatform>
+                                </Label.FontSize>
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Delete_Button_IsEnabled}" Value="False">
+                                        <Setter Property="TextColor">
+                                            <OnPlatform x:TypeArguments="Color">
+                                                <On Platform="Android" Value="Black"/>
+                                                <On Platform="WinUI" Value="White"/>
+                                            </OnPlatform>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Delete_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Padding>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="Android" Value="10,5,10,5"/>
+                                    <On Platform="WinUI" Value="15,5,15,5"/>
+                                </OnPlatform>
+                            </Border.Padding>
+                        </Border>
+                        <Border BackgroundColor="#381452" VerticalOptions="Start" IsEnabled="{Binding Edit_Button_IsEnabled}" StrokeShape="RoundRectangle 0,0,0,20" HorizontalOptions="Center" Stroke="#422246" StrokeDashOffset="0" StrokeLineCap="Round" StrokeLineJoin="Round" StrokeThickness="3" StrokeMiterLimit="0">
+                            <Label Text="Spielfeld bearbeiten" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="#8096A3">
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="15"/>
+                                        <On Platform="WinUI" Value="15"/>
+                                    </OnPlatform>
+                                </Label.FontSize>
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Edit_Button_IsEnabled}" Value="False">
+                                        <Setter Property="TextColor">
+                                            <OnPlatform x:TypeArguments="Color">
+                                                <On Platform="Android" Value="Black"/>
+                                                <On Platform="WinUI" Value="White"/>
+                                            </OnPlatform>
+                                        </Setter>                                
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Edit_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Padding>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="Android" Value="10,5,10,5"/>
+                                    <On Platform="WinUI" Value="15,5,15,5"/>
+                                </OnPlatform>
+                            </Border.Padding>
+                        </Border>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" Margin="10,20,0,0" Spacing="10" HorizontalOptions="FillAndExpand">
+                        <Label Text="Status des Lösers :" TextColor="#ABE4DA"/>
+                        <Label Text="{Binding Status_Solver}" TextColor="Yellow" />
+                        <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#60615F" StrokeThickness="3" IsVisible="False" BackgroundColor="#B6C2CD" Padding="3,1,3,1" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
+                            <Label Text="Reset" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#0A1212"/>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Reset_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Arbeitet">
+                                    <Setter Property="IsVisible" Value="True"></Setter>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Abgebrochen">
+                                    <Setter Property="IsVisible" Value="True"></Setter>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Ungelöst">
+                                    <Setter Property="IsVisible" Value="True"></Setter>
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#991E0E" StrokeThickness="3" IsVisible="False" BackgroundColor="#692424" Padding="3,1,3,1" HorizontalOptions="End" VerticalOptions="Center">
+                            <Label Text="Abbruch" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#45B6B3"/>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Cancel_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Arbeitet">
+                                    <Setter Property="IsVisible" Value="True"></Setter>
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#29990E" StrokeThickness="3" IsVisible="False" BackgroundColor="#296110" Padding="3,1,3,1" HorizontalOptions="End" VerticalOptions="Center">
+                            <Label Text="Weiter" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#45B6B3"/>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Continue_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Abgebrochen">
+                                    <Setter Property="IsVisible" Value="True"></Setter>
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#29990E" StrokeThickness="3" IsVisible="False" BackgroundColor="#296110" Padding="3,1,3,1" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
+                            <Label Text="Wiederholen" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#45B6B3"/>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Restart_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Fertig">
+                                    <Setter Property="IsVisible" Value="True"></Setter>
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="#60615F" StrokeThickness="3" IsVisible="False" BackgroundColor="#B6C2CD" Padding="3,1,3,1" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
+                            <Label Text="Starten" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="#0A1212"/>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Continue_Tapped"/>
+                            </Border.GestureRecognizers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Bereit">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
+                            <Label Text="Schwierigkeit :" TextColor="#ABE4DA" IsVisible="{Binding Difficulty, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+                            <Label Text="{Binding Difficulty}" TextColor="Yellow" >
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="15"/>
                                         <On Platform="WinUI" Value="15"/>
                                     </OnPlatform>
                                 </Label.FontSize>
                             </Label>
-                        </CollectionView.Header>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate >
-                                <Frame  Padding="0" IsVisible="True" VerticalOptions="Center" HorizontalOptions="Center"  BackgroundColor="#281835"  BorderColor="#020203">
-                                    <Label Text="{Binding .}" TextColor="#757178" FontSize="Body" HeightRequest="40" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="Center" VerticalTextAlignment="Center" HorizontalTextAlignment="Center">
-                                        <Label.WidthRequest>
-                                            <OnPlatform x:TypeArguments="x:Double">
-                                                <On Platform="Android" Value="105"/>
-                                                <On Platform="WinUI" Value="100"/>
-                                            </OnPlatform>
-                                        </Label.WidthRequest>
-                                    </Label>
-                                    <Frame.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="Algorithmus_Clicked" CommandParameter="{Binding .}"/>
-                                    </Frame.GestureRecognizers>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                    <Border.Triggers>
-                        <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Undefiniert">
-                            <Setter Property="IsVisible" Value="True"></Setter>
-                        </DataTrigger>
-                    </Border.Triggers>
-                </Border>
-                <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
-                    <Label Text="Algorithmus :" TextColor="#ABE4DA" IsVisible="{Binding Algorithmus_Label, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
-                    <Label Text="{Binding Algorithmus_Label}" TextColor="Yellow" >
-                        <Label.FontSize>
-                            <OnPlatform x:TypeArguments="x:Double">
-                                <On Platform="Android" Value="15"/>
-                                <On Platform="WinUI" Value="15"/>
-                            </OnPlatform>
-                        </Label.FontSize>
-                    </Label>
-                </StackLayout>
-                <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
-                    <Label Text="Dauer :" TextColor="#ABE4DA" IsVisible="{Binding Timer_Label, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
-                    <Label Text="{Binding Timer_Label}" TextColor="Yellow" >
-                        <Label.FontSize>
-                            <OnPlatform x:TypeArguments="x:Double">
-                                <On Platform="Android" Value="15"/>
-                                <On Platform="WinUI" Value="15"/>
-                            </OnPlatform>
-                        </Label.FontSize>
-                    </Label>
-                </StackLayout>
-                <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
-                    <Label  Text="Versuche :" TextColor="#ABE4DA" >
-                        <Label.Triggers>
-                            <DataTrigger TargetType="Label" Binding="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" Value="False">
-                                <Setter Property="IsVisible" Value="False"/>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
+                            <Label Text="Algorithmus :" TextColor="#ABE4DA" IsVisible="{Binding Algorithmus_Label, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+                            <Label Text="{Binding Algorithmus_Label}" TextColor="Yellow" >
+                                <Label.FontSize>
+                                    <OnPlatform x:TypeArguments="x:Double">
+                                        <On Platform="Android" Value="15"/>
+                                        <On Platform="WinUI" Value="15"/>
+                                    </OnPlatform>
+                                </Label.FontSize>
+                            </Label>
+                        </StackLayout>
+                    </StackLayout>
+                    <Border StrokeShape="RoundRectangle 5,5,5,5" Stroke="Transparent" StrokeThickness="3" IsVisible="False" BackgroundColor="Transparent" Padding="3,1,3,1" HorizontalOptions="StartAndExpand" VerticalOptions="Center">
+                        <CollectionView x:Name="algorithmuslist" HorizontalOptions="End" ItemSizingStrategy="MeasureFirstItem" HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never" Opacity="0"  IsGrouped="False" IsVisible="True" Margin="5,00,00,00" >
+                            <CollectionView.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>Brute-Force</x:String>
+                                    <x:String>Brute-Force Advanced</x:String>
+                                    <x:String>Brute-Force Next Gen</x:String>
+                                    <x:String>Check one direction</x:String>
+                                </x:Array>
+                            </CollectionView.ItemsSource>
+                            <CollectionView.ItemsLayout>
+                                <GridItemsLayout Orientation="Horizontal" Span="1" VerticalItemSpacing="5" HorizontalItemSpacing="5"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.Header>
+                                <Label Text="Algorithmus :" VerticalOptions="Center" TextColor="#ABE4DA" FontAttributes="None" HorizontalOptions="Center" Margin="0,0,0,10">
+                                    <Label.FontSize>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="10"/>
+                                            <On Platform="WinUI" Value="15"/>
+                                        </OnPlatform>
+                                    </Label.FontSize>
+                                </Label>
+                            </CollectionView.Header>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate >
+                                    <Frame  Padding="0" IsVisible="True" VerticalOptions="Center" HorizontalOptions="Center"  BackgroundColor="#281835"  BorderColor="#020203">
+                                        <Label Text="{Binding .}" TextColor="#757178" FontSize="Body" HeightRequest="40" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="Center" VerticalTextAlignment="Center" HorizontalTextAlignment="Center">
+                                            <Label.WidthRequest>
+                                                <OnPlatform x:TypeArguments="x:Double">
+                                                    <On Platform="Android" Value="105"/>
+                                                    <On Platform="WinUI" Value="100"/>
+                                                </OnPlatform>
+                                            </Label.WidthRequest>
+                                        </Label>
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="Algorithmus_Clicked" CommandParameter="{Binding .}"/>
+                                        </Frame.GestureRecognizers>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding Status_Solver}" Value="Undefiniert">
+                                <Setter Property="IsVisible" Value="True"></Setter>
                             </DataTrigger>
-                            <DataTrigger TargetType="Label" Binding="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" Value="True">
-                                <Setter Property="IsVisible" Value="True"/>
-                            </DataTrigger>
-                        </Label.Triggers>
-                    </Label>
-                    <Label TextColor="Yellow" Text="{Binding Attampts_Label}" IsVisible="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" >
-                        <Label.FontSize>
-                            <OnPlatform x:TypeArguments="x:Double">
-                                <On Platform="Android" Value="15"/>
-                                <On Platform="WinUI" Value="15"/>
-                            </OnPlatform>
-                        </Label.FontSize>
-                    </Label>
+                        </Border.Triggers>
+                    </Border>
+                    <StackLayout Orientation="Horizontal">
+                    <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
+                        <Label Text="Dauer :" TextColor="#ABE4DA" IsVisible="{Binding Timer_Label, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+                        <Label Text="{Binding Timer_Label}" TextColor="Yellow" >
+                            <Label.FontSize>
+                                <OnPlatform x:TypeArguments="x:Double">
+                                    <On Platform="Android" Value="15"/>
+                                    <On Platform="WinUI" Value="15"/>
+                                </OnPlatform>
+                            </Label.FontSize>
+                        </Label>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" Margin="10,0,0,0" Spacing="10">
+                        <Label  Text="Versuche :" TextColor="#ABE4DA" >
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" Value="False">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" Value="True">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Label TextColor="Yellow" Text="{Binding Attampts_Label}" IsVisible="{Binding Attampts_Label, Converter={helper:IsNot0Converter}}" >
+                            <Label.FontSize>
+                                <OnPlatform x:TypeArguments="x:Double">
+                                    <On Platform="Android" Value="15"/>
+                                    <On Platform="WinUI" Value="15"/>
+                                </OnPlatform>
+                            </Label.FontSize>
+                        </Label>
+                    </StackLayout>
                 </StackLayout>
                 </StackLayout>
 
@@ -926,22 +930,23 @@
                         </Border>
                     </StackLayout>
                 </StackLayout>
-                <Label Text="Logbuch:" TextColor="DarkRed" FontSize="Medium" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,0,0,5">
-                    <Label.Scale>
-                        <OnPlatform x:TypeArguments="x:Double">
-                            <On Platform="Android" Value="1.5"/>
-                            <On Platform="WinUI" Value="1"/>
-                        </OnPlatform>
-                    </Label.Scale>
-                </Label>
-                <CollectionView x:Name="loglist" VerticalScrollBarVisibility="Never"  VerticalOptions="StartAndExpand" HorizontalOptions="Center" >
-                    <CollectionView.WidthRequest>
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*" VerticalOptions="StartAndExpand">
+                    <Grid.WidthRequest>
                         <OnPlatform x:TypeArguments="x:Double">
                             <On Platform="Android" Value="400"/>
                             <On Platform="WinUI" Value="500"/>
                         </OnPlatform>
-                    </CollectionView.WidthRequest>
-                    <CollectionView.ItemTemplate>
+                    </Grid.WidthRequest>
+                    <Label Text="Logbuch:" TextColor="DarkRed" FontSize="Medium" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,0,0,5">
+                        <Label.Scale>
+                            <OnPlatform x:TypeArguments="x:Double">
+                                <On Platform="Android" Value="1.5"/>
+                                <On Platform="WinUI" Value="1"/>
+                            </OnPlatform>
+                        </Label.Scale>
+                    </Label>
+                    <CollectionView x:Name="loglist" VerticalScrollBarVisibility="Never"  VerticalOptions="StartAndExpand" HorizontalOptions="Center" Grid.Row="1">
+                        <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Logdata">
                             <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
                                 <StackLayout.Scale>
@@ -970,18 +975,51 @@
                                     </Label.TextColor>
                                 </Label>
                                 <!--<Label Text="Block"/>
-                                <Label Text="{Binding Grid}" TextColor="Yellow"/>
-                                <Label Text=" Reihe "/>
-                                <Label Text="{Binding Row}" TextColor="Yellow"/>
-                                <Label Text=" Spalte "/>
-                                <Label Text="{Binding Column}" TextColor="Yellow"/>-->
+                        <Label Text="{Binding Grid}" TextColor="Yellow"/>
+                        <Label Text=" Reihe "/>
+                        <Label Text="{Binding Row}" TextColor="Yellow"/>
+                        <Label Text=" Spalte "/>
+                        <Label Text="{Binding Column}" TextColor="Yellow"/>-->
                                 <StackLayout.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="Logdata_Tapped" Buttons="Primary"/>
-                                </StackLayout.GestureRecognizers>          
+                                </StackLayout.GestureRecognizers>
                             </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
+                    <Label Text="Techniken:" TextColor="DarkRed" FontSize="Medium" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,0,0,5" IsVisible="{Binding Logs_IsEnabled, Converter={toolkit:InvertedBoolConverter}}" Grid.Column="1">
+                        <Label.Scale>
+                            <OnPlatform x:TypeArguments="x:Double">
+                                <On Platform="Android" Value="1.5"/>
+                                <On Platform="WinUI" Value="1"/>
+                            </OnPlatform>
+                        </Label.Scale>
+                    </Label>
+                    <CollectionView x:Name="usedtechniclist" VerticalScrollBarVisibility="Never"  VerticalOptions="StartAndExpand" HorizontalOptions="Center" IsVisible="{Binding Logs_IsEnabled, Converter={toolkit:InvertedBoolConverter}}" Grid.Column="1" Grid.Row="1">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Used_Technic">
+                                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                                    <StackLayout.Scale>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android" Value="1.1"/>
+                                            <On Platform="WinUI" Value="0.9"/>
+                                        </OnPlatform>
+                                    </StackLayout.Scale>
+                                    <Label Text="{Binding Count}"/>
+                                    <Label Text="{Binding Text}">
+                                        <Label.TextColor>
+                                            <OnPlatform x:TypeArguments="Color">
+                                                <On Platform="Android" Value="White"/>
+                                                <On Platform="WinUI" Value="White"/>
+                                            </OnPlatform>
+                                        </Label.TextColor>
+                                    </Label>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
             </StackLayout>
 
             <CollectionView x:Name="number_collectionview" VerticalOptions="EndAndExpand" Margin="0,0,0,0" Opacity="0" BackgroundColor="Transparent" HorizontalOptions="Center" SelectionMode="Single" IsVisible="False" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">
