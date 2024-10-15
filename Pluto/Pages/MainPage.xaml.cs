@@ -681,6 +681,60 @@ namespace Pluto.Pages
                 started = false;
             }
         }
+        public async void Change_Strategie_Tapped(object sender, TappedEventArgs e)
+        {
+            tokensource?.Cancel();
+
+            Status_Solver = "Undefiniert";
+            algorithmuslist.Opacity = 1;
+            Algorithmus_Label = string.Empty;
+
+            if (Fields.Count == 9 && Fields[0].Count == 9)
+            {
+                foreach (ObservableCollection<Field> fs in Fields)
+                {
+                    foreach (Field f in fs)
+                    {
+                        if (f.Is_Locked == false)
+                        {
+                            f.Is_Locked = false;
+                            f.Is_Select = false;
+                            f.Is_Fault = false;
+                            f.Skips = 0;
+                            f.Is_Saturated = false;
+                            f.Number = 0;
+                            f.Is_Clearly = false;
+                            f.Possebilities.Clear();
+                            f.Is_Semi_Clearly = false;
+                        }
+                    }
+                }
+
+
+                if (numberGrid == true)
+                {
+                    current_Field.Is_Select = false;
+                    current_Field.Was_Manuel_Select = false;
+                    var a1 = number_collectionview.FadeTo(0, 500, Easing.Linear);
+                    var a2 = number_collectionview.TranslateTo(0, 30, 500, Easing.Linear);
+                    await Task.WhenAll(a1, a2);
+                    number_collectionview.IsVisible = false;
+                    numberGrid = false;
+                }
+
+                stopwatch = null;
+                field_position_marker = 0;
+                next_gen_marker = 0;
+                field_stop_position = 1;
+                skip_stop_position = 0;
+                Possebilities_Log = new List<Possebilitie>();
+                Attampts_Label = 0;
+                Logs.Clear();
+                Used_Technics.Clear();
+                curren_Logdata = null;
+                started = false;
+            }
+        }
 
 
         public void Logdata_Tapped(object sender, TappedEventArgs e)
@@ -887,7 +941,7 @@ namespace Pluto.Pages
             }
             finally
             {
-                tokensource.Dispose();
+                tokensource?.Dispose();
                 tokensource = null;
             }
         }
