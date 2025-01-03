@@ -10,9 +10,9 @@ using CommunityToolkit.Maui.Core.Extensions;
 
 namespace Pluto.Logic.Algorithmen
 {
-    public class Brute_Force_Next_Gen
+    public class Only_Logic
     {
-        public Brute_Force_Next_Gen() { }
+        public Only_Logic() { }
 
         /// <summary>
         /// Der Hauptprozzes wo überprüft wird ob der Block korrekt ist. 
@@ -36,13 +36,13 @@ namespace Pluto.Logic.Algorithmen
             if (MainPage.started == false)
             {
                 MainPage.started = true;
-                 await Set_Possebilities_And_Denail(all_fields);
+                await Set_Possebilities_And_Denail(all_fields);
             }
 
             bool is_finished = false;
             while (is_finished == false)
             {
-                if(!all_fields.Any(x=>x.Number == 0))
+                if (!all_fields.Any(x => x.Number == 0))
                     is_finished = true;
 
                 //Wenn der Prozess abgebrochen wird, setzt alle Markierungen auf die aktuellen Werte
@@ -52,94 +52,66 @@ namespace Pluto.Logic.Algorithmen
                     return false;
                 }
 
-                switch(MainPage.next_gen_marker)
-                {
-                    case 0:
-                        {
-                            MainPage.next_gen_marker = 1;
-                            //Ermittle Hidden Single
-                            await strategy.Hidden_Single(0);
+                if (MainPage.next_gen_marker == 1 || MainPage.next_gen_marker == 0)
+                    //Ermittle Hidden Single
+                    MainPage.next_gen_marker = 1;
+                await strategy.Hidden_Single(0);
+                MainPage.next_gen_marker = 0;
 
-                            MainPage.next_gen_marker = 2;
-                            //Ermittle Naked Single
-                            await strategy.Naked_Single(0);
+                if (MainPage.next_gen_marker == 2 || MainPage.next_gen_marker == 0)
+                    //Ermittle Naked Single
+                    MainPage.next_gen_marker = 2;
+                await strategy.Naked_Single(0);
+                MainPage.next_gen_marker = 0;
 
-                            MainPage.next_gen_marker = 3;
-                            //Ermittle Hidden Trible
-                            await strategy.Hidden_Trible();
-
-                            MainPage.next_gen_marker = 4;
-                            //Ermittle Naked Trible
-                            await strategy.Naked_Trible();
-
-                            MainPage.next_gen_marker = 5;
-                            ////Ermittle Hidden Pair 
-                            await strategy.Hidden_Pair();
-
-                            MainPage.next_gen_marker = 6;
-                            //Ermittle Naked Pair
-                            await strategy.Naked_Pair();
-
-                            //MainPage.next_gen_marker = 7;
-                            ////Ermittle Locked Candidates Typ 1
-                            //await strategy.Locked_Candidates_Typ_1();
-
-                            //MainPage.next_gen_marker = 8;
-                            ////Ermittle Locked Candidates Typ 2
-                            //await strategy.Locked_Candidates_Typ_2();
-
-                            MainPage.next_gen_marker = 0;
-                            break;
-                        }
-
-                    case 1:
-                        //Ermittle Hidden Single
-                        await strategy.Hidden_Single(0);
-                        MainPage.next_gen_marker = 0;
-                        break;
-
-                    case 2:
-                        //Ermittle Naked Single
-                        await strategy.Naked_Single(0);
-                        MainPage.next_gen_marker = 0;
-                        break;
-
-                    case 3:
+                if (MainPage.next_gen_marker == 3 || MainPage.next_gen_marker == 0)
                     //Ermittle Hidden Trible
-                    await strategy.Hidden_Trible();
-                    MainPage.next_gen_marker = 0;
-                    break;
+                    MainPage.next_gen_marker = 3;
+                await strategy.Hidden_Trible();
+                MainPage.next_gen_marker = 0;
 
-                    case 4:
-                        //Ermittle Naked Trible
-                        await strategy.Naked_Trible();
-                        MainPage.next_gen_marker = 0;
-                        break;
+                if (MainPage.next_gen_marker == 4 || MainPage.next_gen_marker == 0)
+                    //Ermittle Naked Trible
+                    MainPage.next_gen_marker = 4;
+                await strategy.Naked_Trible();
+                MainPage.next_gen_marker = 0;
 
-                    case 5:
-                    ////Ermittle Hidden Pair 
-                    await strategy.Hidden_Pair();
-                    MainPage.next_gen_marker = 0;
-                    break;
+                if (MainPage.next_gen_marker == 5 || MainPage.next_gen_marker == 0)
+                    ////Ermittle Hidden Pair
+                    MainPage.next_gen_marker = 5;
+                await strategy.Hidden_Pair();
+                MainPage.next_gen_marker = 0;
 
-                    case 6:
+                if (MainPage.next_gen_marker == 6 || MainPage.next_gen_marker == 0)
                     //Ermittle Naked Pair
-                    await strategy.Naked_Pair();
-                    MainPage.next_gen_marker = 0;
-                    break;
+                    MainPage.next_gen_marker = 6;
+                await strategy.Naked_Pair();
+                MainPage.next_gen_marker = 0;
 
-                    case 7:
+                if (MainPage.next_gen_marker == 7 || MainPage.next_gen_marker == 0)
                     //Ermittle Locked Candidates Typ 1
-                    await strategy.Locked_Candidates_Typ_1();
-                    MainPage.next_gen_marker = 0;
-                    break;
+                    MainPage.next_gen_marker = 7;
+                await strategy.Locked_Candidates_Typ_1();
+                MainPage.next_gen_marker = 0;
 
-                    case 8:
+                if (MainPage.next_gen_marker == 8 || MainPage.next_gen_marker == 0)
                     //Ermittle Locked Candidates Typ 2
-                    await strategy.Locked_Candidates_Typ_2();
+                    MainPage.next_gen_marker = 8;
+                await strategy.Locked_Candidates_Typ_2();
+                MainPage.next_gen_marker = 0;
+
+                if (MainPage.next_gen_marker == 9 || MainPage.next_gen_marker == 0)
+                    //Ermittle X-Wing
+                    MainPage.next_gen_marker = 9;
+                    await strategy.X_Wing();
                     MainPage.next_gen_marker = 0;
-                    break;
-                }
+
+                if (MainPage.next_gen_marker == 10 || MainPage.next_gen_marker == 0)
+                    //Ermittle Y-Wing
+                    MainPage.next_gen_marker = 10;
+                    await strategy.Y_Wing();
+                    MainPage.next_gen_marker = 0;
+
 
                 await Task.Delay(1);
 

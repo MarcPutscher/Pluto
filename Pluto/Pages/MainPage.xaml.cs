@@ -83,8 +83,8 @@ namespace Pluto.Pages
             int count = 1;
             for (int i = 1; i < 10; i++)
             {
-                if(i == 1)
-                { row_follower = 1; column_follower = 1; count = 1;}
+                if (i == 1)
+                { row_follower = 1; column_follower = 1; count = 1; }
 
                 if (i == 2)
                 { row_follower = 1; column_follower = 4; count = 1; }
@@ -120,14 +120,14 @@ namespace Pluto.Pages
                     }
 
 
-                    list.Add(new Field() { Id = id_follower,  Grid_Number = i+grid_follower, Real_Grid_Number = i, Row_Number = row_follower, Column_Number = column_follower });
+                    list.Add(new Field() { Id = id_follower, Grid_Number = i + grid_follower, Real_Grid_Number = i, Row_Number = row_follower, Column_Number = column_follower });
                     id_follower++;
                     row_follower++;
                 }
 
                 Fields.Add(list.ToObservableCollection());
 
-                List<Field>clone = new List<Field>();
+                List<Field> clone = new List<Field>();
                 //Klont alle Felder in dem Block
                 foreach (var item in (IEnumerable)list)
                 {
@@ -176,7 +176,7 @@ namespace Pluto.Pages
             if (Status_Solver == "Arbeitet")
                 return;
 
-            Field? current = (sender as StackLayout)?.BindingContext as Field ;
+            Field? current = (sender as StackLayout)?.BindingContext as Field;
 
             if (current == null)
                 return;
@@ -184,7 +184,7 @@ namespace Pluto.Pages
             if (current.Is_Locked == true)
                 return;
 
-            if(current.Is_Select == false)
+            if (current.Is_Select == false)
             {
                 if (current_Field == new Field())
                 {
@@ -192,7 +192,7 @@ namespace Pluto.Pages
                 }
                 else
                 {
-                    if(current_Field != current)
+                    if (current_Field != current)
                     {
                         previous_Field = current_Field;
                     }
@@ -235,7 +235,7 @@ namespace Pluto.Pages
                     }
                 }
 
-                if(settings.IsVisible == true)
+                if (settings.IsVisible == true)
                 {
                     var a3 = settings.FadeTo(0, 500, Easing.Linear);
                     var a4 = settings.TranslateTo(0, -30, 500, Easing.Linear);
@@ -273,7 +273,7 @@ namespace Pluto.Pages
 
             try
             {
-                Number? current = (sender as Frame)?.BindingContext as Number;
+                Number? current = (sender as Border)?.BindingContext as Number;
 
                 if (current == null)
                     return;
@@ -388,7 +388,7 @@ namespace Pluto.Pages
                     }
                 }
 
-                if (fields.Where(x=>x.Number != 0).Count() != 0 && faults.Count == 0 && checklist.Contains(false) == false)
+                if (fields.Where(x => x.Number != 0).Count() != 0 && faults.Count == 0 && checklist.Contains(false) == false)
                 {
                     Spielfeldoptionen.IsVisible = true;
 
@@ -426,7 +426,7 @@ namespace Pluto.Pages
                 {
                     foreach (Field f in fs)
                     {
-                        if(f.Number != 0 && f.Is_Fault == false && f.Was_Manuel_Select == true)
+                        if (f.Number != 0 && f.Is_Fault == false && f.Was_Manuel_Select == true)
                         {
                             f.Is_Select = false;
                             f.Is_Locked = true;
@@ -485,13 +485,13 @@ namespace Pluto.Pages
                 var a3 = number_collectionview.FadeTo(0, 500, Easing.Linear);
                 var a4 = number_collectionview.TranslateTo(0, 30, 500, Easing.Linear);
 
-                await Task.WhenAll(a1, a2, a3,a4);
+                await Task.WhenAll(a1, a2, a3, a4);
 
                 Status_Solver = "Wartet";
                 Difficulty = null;
 
-                field_position_marker =  0 ;
-                next_gen_marker = 0 ;
+                field_position_marker = 0;
+                next_gen_marker = 0;
                 field_stop_position = 1;
                 skip_stop_position = 0;
                 Possebilities_Log.Clear();
@@ -518,7 +518,7 @@ namespace Pluto.Pages
                 {
                     foreach (Field f in fs)
                     {
-                        if (Locked_Fields.Where(x=>x.Id == f.Id).Count() != 0)
+                        if (Locked_Fields.Where(x => x.Id == f.Id).Count() != 0)
                         {
                             f.Is_Locked = false;
                             Locked_Fields.Remove(f);
@@ -539,9 +539,9 @@ namespace Pluto.Pages
         {
             try
             {
-                if (sender is Frame)
+                if (sender is Border)
                 {
-                    Algorithmus_Label = (sender as Frame).BindingContext.ToString();
+                    Algorithmus_Label = (sender as Border).BindingContext.ToString();
 
                     if (Algorithmus_Label == string.Empty)
                         return;
@@ -584,7 +584,7 @@ namespace Pluto.Pages
                 {
                     foreach (Field f in fs)
                     {
-                        if(f.Is_Locked == false)
+                        if (f.Is_Locked == false)
                         {
                             f.Is_Locked = false;
                             f.Is_Select = false;
@@ -681,6 +681,60 @@ namespace Pluto.Pages
                 started = false;
             }
         }
+        public async void Change_Strategie_Tapped(object sender, TappedEventArgs e)
+        {
+            tokensource?.Cancel();
+
+            Status_Solver = "Undefiniert";
+            algorithmuslist.Opacity = 1;
+            Algorithmus_Label = string.Empty;
+
+            if (Fields.Count == 9 && Fields[0].Count == 9)
+            {
+                foreach (ObservableCollection<Field> fs in Fields)
+                {
+                    foreach (Field f in fs)
+                    {
+                        if (f.Is_Locked == false)
+                        {
+                            f.Is_Locked = false;
+                            f.Is_Select = false;
+                            f.Is_Fault = false;
+                            f.Skips = 0;
+                            f.Is_Saturated = false;
+                            f.Number = 0;
+                            f.Is_Clearly = false;
+                            f.Possebilities.Clear();
+                            f.Is_Semi_Clearly = false;
+                        }
+                    }
+                }
+
+
+                if (numberGrid == true)
+                {
+                    current_Field.Is_Select = false;
+                    current_Field.Was_Manuel_Select = false;
+                    var a1 = number_collectionview.FadeTo(0, 500, Easing.Linear);
+                    var a2 = number_collectionview.TranslateTo(0, 30, 500, Easing.Linear);
+                    await Task.WhenAll(a1, a2);
+                    number_collectionview.IsVisible = false;
+                    numberGrid = false;
+                }
+
+                stopwatch = null;
+                field_position_marker = 0;
+                next_gen_marker = 0;
+                field_stop_position = 1;
+                skip_stop_position = 0;
+                Possebilities_Log = new List<Possebilitie>();
+                Attampts_Label = 0;
+                Logs.Clear();
+                Used_Technics.Clear();
+                curren_Logdata = null;
+                started = false;
+            }
+        }
 
 
         public void Logdata_Tapped(object sender, TappedEventArgs e)
@@ -726,7 +780,7 @@ namespace Pluto.Pages
                 last_Logdata.Is_Select = false;
             }
 
-            if (curren_Logdata.Logindex+1 == Logs.Count)
+            if (curren_Logdata.Logindex + 1 == Logs.Count)
             {
                 Next_Move_Button_IsEnabled = false;
                 Last_Move_Button_IsEnabled = true;
@@ -740,11 +794,11 @@ namespace Pluto.Pages
 
             int follower = 0;
             int grid = 0;
-            foreach(Field f in curren_Logdata.Recorded_Playground)
+            foreach (Field f in curren_Logdata.Recorded_Playground)
             {
                 LogFields[grid][follower] = f;
                 follower++;
-                if(follower >8)
+                if (follower > 8)
                 {
                     follower = 0;
                     grid++;
@@ -760,13 +814,13 @@ namespace Pluto.Pages
                 {
                     last_Logdata = curren_Logdata;
 
-                    curren_Logdata = Logs[Logs.Count - curren_Logdata.Logindex-2];
+                    curren_Logdata = Logs[Logs.Count - curren_Logdata.Logindex - 2];
 
                     curren_Logdata.Is_Select = true;
 
                     last_Logdata.Is_Select = false;
 
-                    if (curren_Logdata.Logindex+1 == Logs.Count)
+                    if (curren_Logdata.Logindex + 1 == Logs.Count)
                     {
                         Next_Move_Button_IsEnabled = false;
                         Last_Move_Button_IsEnabled = true;
@@ -795,7 +849,7 @@ namespace Pluto.Pages
         public void Close_Logs_Tapped(object sender, TappedEventArgs e)
         {
             Logs_IsEnabled = false;
-            curren_Logdata.Is_Select = false ;
+            curren_Logdata.Is_Select = false;
             curren_Logdata = null;
             last_Logdata = null;
         }
@@ -807,7 +861,7 @@ namespace Pluto.Pages
                 {
                     last_Logdata = curren_Logdata;
 
-                    curren_Logdata = Logs[Logs.Count -curren_Logdata.Logindex ];
+                    curren_Logdata = Logs[Logs.Count - curren_Logdata.Logindex];
 
                     curren_Logdata.Is_Select = true;
 
@@ -848,12 +902,12 @@ namespace Pluto.Pages
 
             try
             {
-                if(Algorithmus_Label == "")
+                if (Algorithmus_Label == "")
                     return;
 
                 Status_Solver = "Arbeitet";
 
-                bool result = await solver.Process(Algorithmus_Label,token, this);
+                bool result = await solver.Process(Algorithmus_Label, token, this);
 
                 if (result == true)
                 {
@@ -868,7 +922,7 @@ namespace Pluto.Pages
             }
             catch (OperationCanceledException ex)
             {
-                if(Status_Solver == "Bereit")
+                if (Status_Solver == "Bereit")
                 {
                     field_position_marker = 0;
                     next_gen_marker = 0;
@@ -887,19 +941,19 @@ namespace Pluto.Pages
             }
             finally
             {
-                tokensource.Dispose();
+                tokensource?.Dispose();
                 tokensource = null;
             }
         }
         public async Task Successfully_Solved()
         {
-            for(int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++)
             {
                 List<Field> fields = new List<Field>();
-                int follower = 0;   
+                int follower = 0;
                 foreach (ObservableCollection<Field> fs in Fields)
                 {
-                    if(i == 0 )
+                    if (i == 0)
                     {
                         fields.Add(fs[0]);
                     }
@@ -909,7 +963,7 @@ namespace Pluto.Pages
                     }
                     if (i == 2)
                     {
-                        fields.AddRange([fs[2], fs[4],fs[6]]);
+                        fields.AddRange([fs[2], fs[4], fs[6]]);
                     }
                     if (i == 3)
                     {
@@ -985,7 +1039,7 @@ namespace Pluto.Pages
             {
                 tokensource?.Cancel();
 
-                if(Status_Solver == "Arbeitet")
+                if (Status_Solver == "Arbeitet")
                 {
                     Status_Solver = "Abgebrochen";
                 }
@@ -998,7 +1052,7 @@ namespace Pluto.Pages
                 playgroundlist.IsVisible = true;
                 var a3 = playgroundlist.FadeTo(1, 300);
                 var a4 = difficultylist.FadeTo(0, 300);
-                await Task.WhenAll(a1, a2,a3,a4);
+                await Task.WhenAll(a1, a2, a3, a4);
                 difficultylist.IsVisible = false;
 
 
@@ -1065,7 +1119,7 @@ namespace Pluto.Pages
                 settings.IsVisible = false;
             }
 
-            if(playoption == true && settings.IsVisible == false)
+            if (playoption == true && settings.IsVisible == false)
             {
                 Spielfeldoptionen.IsVisible = true;
 
@@ -1088,12 +1142,12 @@ namespace Pluto.Pages
 
             List<int> ints = new List<int>();
             int count = 0;
-            foreach(ObservableCollection<Field> fs in Fields)
+            foreach (ObservableCollection<Field> fs in Fields)
             {
-                foreach(Field f in fs)
+                foreach (Field f in fs)
                 {
                     ints.Add(f.Number);
-                    if(f.Is_Fault == true)
+                    if (f.Is_Fault == true)
                         return;
                     if (f.Number != 0)
                     {
@@ -1104,9 +1158,9 @@ namespace Pluto.Pages
             if (count == 0)
                 return;
 
-            if (sender is Frame)
+            if (sender is Border)
             {
-                Difficulty = (sender as Frame).BindingContext.ToString();
+                Difficulty = (sender as Border).BindingContext.ToString();
 
                 playgroundlist.IsVisible = true;
                 var a1 = playgroundlist.FadeTo(1, 300);
@@ -1132,14 +1186,14 @@ namespace Pluto.Pages
             playground.Field_With_Numbers_Count = count;
 
             int result = await PlaygroundService.Add_Playground(playground);
-            if(result != 0)
+            if (result != 0)
                 return;
 
             playgroundlist.ItemsSource = await PlaygroundService.Get_all_Playgrounds_in_ObservableCollection();
         }
         private async void Load_Playground__Clicked(object sender, EventArgs e)
         {
-            if(playgroundlist.SelectedItem != null && playgroundlist.SelectedItem is Playground)
+            if (playgroundlist.SelectedItem != null && playgroundlist.SelectedItem is Playground)
             {
                 Create_Button_IsEnabled = false;
                 Delete_Button_IsEnabled = true;
@@ -1187,13 +1241,13 @@ namespace Pluto.Pages
         }
         private async void Remove_Playground__Clicked(object sender, EventArgs e)
         {
-            if(playgroundlist.SelectedItem != null && playgroundlist.SelectedItem is Playground)
+            if (playgroundlist.SelectedItem != null && playgroundlist.SelectedItem is Playground)
             {
                 bool ressult = await PlaygroundService.Remove_Playground((Playground)playgroundlist.SelectedItem);
 
-                if(ressult == false)
+                if (ressult == false)
                 {
-                    playgroundlist.ItemsSource=null;
+                    playgroundlist.ItemsSource = null;
                 }
                 else
                 {
@@ -1318,7 +1372,7 @@ namespace Pluto.Pages
         public static int block_stop_position = 0;
         public static int skip_stop_position = 0;
         public static string dificulty_marker = string.Empty;
-        public static bool started = false; 
+        public static bool started = false;
 
 
         public bool create_button_IsEnabled = false;

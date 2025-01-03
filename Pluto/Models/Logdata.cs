@@ -99,14 +99,16 @@ namespace Pluto.Models
                 Hidden_Pair = "Hidden Pair",
                 Naked_Trible = "Naked Trible",
                 Hidden_Trible = "Hidden Trible",
-                Locked_Candidates_Typ1 = "Locked Candidates Typ 1",
-                Locked_Candidates_Typ2 = "Locked Candidates Typ 2";
+                Locked_Candidates_Typ1 = "Locked Cand. Typ 1",
+                Locked_Candidates_Typ2 = "Locked Cand. Typ 2",
+                X_Wing = "X-Wing",
+                Y_Wing = "Y-Wing";
         }
 
-        public Logdata Removed_Market_Number_From_Field(int number,List<Field> fields, string strategies)
+        public Logdata Removed_Market_Number_From_Field(int number, List<Field> fields, string strategies)
         {
             //Setzt den Text in der UI
-            Text = strategies+" | "+number+" als Möglichkeit entfernt im Feld " + id + "" ;
+            Text = strategies + " | " + number + " als Möglichkeit entfernt im Feld " + id + "";
 
             //Setzt den Logindex
             Logindex = MainPage.Logs.Count;

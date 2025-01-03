@@ -25,7 +25,7 @@ namespace Pluto.Models
                 if (Technic == value)
                     return;
                 technic = value; OnPropertyChanged(nameof(Technic));
-                Text = " x" + technic;
+                Text = " x " + technic;
             }
         }
 
@@ -54,7 +54,7 @@ namespace Pluto.Models
         }
 
         public class Technics
-        {   
+        {
             public const string
                 Naked_Single = "Naked Single",
                 Hidden_Single = "Hidden Singel",
@@ -62,8 +62,10 @@ namespace Pluto.Models
                 Hidden_Pair = "Hidden Pair",
                 Naked_Trible = "Naked Trible",
                 Hidden_Trible = "Hidden Trible",
-                Locked_Candidates_Typ1 = "Locked Candidates Typ 1",
-                Locked_Candidates_Typ2 = "Locked Candidates Typ 2";
+                Locked_Candidates_Typ1 = "Locked Cand. Typ 1",
+                Locked_Candidates_Typ2 = "Locked Cand. Typ 2",
+                X_Wing = "X-Wing",
+                Y_Wing = "Y-Wing";
         }
 
 

@@ -23,13 +23,8 @@ namespace Pluto.Logic
             }
             if (algorythmus == "Brute-Force Next Gen")
             {
-                Brute_Force_Next_Gen brute_Force_Next_Gen = new Brute_Force_Next_Gen();
+                Only_Logic brute_Force_Next_Gen = new Only_Logic();
                 return await brute_Force_Next_Gen.MainProcess(token, mainPage);
-            }
-            if (algorythmus == "Check one direction")
-            {
-                Check_One_Direction check_One_Direction = new Check_One_Direction(); 
-                return await check_One_Direction.MainProcess(token, mainPage);
             }
 
             return false;
